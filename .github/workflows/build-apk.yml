@@ -24,10 +24,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 120
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Set up JDK 21
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: 21
           distribution: microsoft
@@ -46,10 +46,14 @@ jobs:
           echo "Reliefy version: $name"
 
       - name: Generate library licences list
-        run: ./gradlew exportLibraryDefinitions --no-configuration-cache
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: .github/scripts/gradle-ci.sh licences exportLibraryDefinitions --no-configuration-cache
 
       - name: Build release APKs (FOSS)
-        run: ./gradlew :androidApp:assembleRelease --stacktrace
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: .github/scripts/gradle-ci.sh assemble :androidApp:assembleRelease --stacktrace
 
       - name: Sign APKs
         id: sign
