@@ -252,7 +252,9 @@ class MainActivity : AppCompatActivity() {
         }
         viewModel.getLocation()
 
-        if (!BuildConfig.DEBUG) viewModel.checkOfficialBuild(packageName, signingCertSha256())
+        // Reliefy: the upstream "official build" lock is not used. Reliefy is a separately named
+        // GPL-3.0 fork with its own package id and signing key, so the upstream check would always
+        // lock it out. See README.md for credits to the original SimpMusic project.
         setContent {
             App(viewModel)
         }

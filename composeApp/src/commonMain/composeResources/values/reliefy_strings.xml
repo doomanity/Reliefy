@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Strings added by Reliefy (fork of SimpMusic). Kept in their own file so upstream merges stay clean. -->
+<resources>
+    <string name="reliefy_fork_credit">Reliefy is a customized fork of SimpMusic. All credit for the original app goes to maxrave-dev and contributors. Tap to open Reliefy on GitHub.</string>
+</resources>

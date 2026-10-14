@@ -116,6 +116,20 @@ fun CreditScreen(
                 },
         )
 
+        Spacer(modifier = Modifier.height(12.dp))
+
+        // Reliefy: fork credit
+        Text(
+            text = stringResource(Res.string.reliefy_fork_credit),
+            style = typo().bodySmall,
+            textAlign = TextAlign.Center,
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 25.dp)
+                    .clickable { openUrl("https://github.com/doomanity/Reliefy") },
+        )
+
         Spacer(modifier = Modifier.height(20.dp))
 
         // App description
