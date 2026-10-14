@@ -52,33 +52,34 @@ jobs:
         run: ./gradlew :androidApp:assembleRelease --stacktrace
 
       - name: Sign APKs
+        id: sign
         env:
-          KEYSTORE_BASE64: ${{ secrets.RELIEFY_KEYSTORE_BASE64 }}
+          # The key file is in the repo (.github/signing), encrypted. Only its password is secret.
           KEYSTORE_PASSWORD: ${{ secrets.RELIEFY_KEYSTORE_PASSWORD }}
-          KEY_ALIAS: ${{ secrets.RELIEFY_KEY_ALIAS }}
-          KEY_PASSWORD: ${{ secrets.RELIEFY_KEY_PASSWORD }}
           VERSION: ${{ steps.version.outputs.name }}
         run: |
           set -euo pipefail
-          if [ -z "${KEYSTORE_BASE64}" ]; then
-            echo "::error::RELIEFY_KEYSTORE_BASE64 secret is missing, cannot sign the APK"
-            exit 1
-          fi
-          echo "$KEYSTORE_BASE64" | base64 -d > reliefy.jks
-          BT="$ANDROID_HOME/build-tools/$(ls "$ANDROID_HOME/build-tools" | sort -V | tail -n 1)"
           mkdir -p dist
+          if [ -z "${KEYSTORE_PASSWORD}" ]; then
+            echo "::warning::RELIEFY_KEYSTORE_PASSWORD secret is not set, so the APKs are left unsigned and no release is published."
+            cp androidApp/build/outputs/apk/release/*-unsigned.apk dist/
+            echo "signed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          BT="$ANDROID_HOME/build-tools/$(ls "$ANDROID_HOME/build-tools" | sort -V | tail -n 1)"
           for apk in androidApp/build/outputs/apk/release/*-unsigned.apk; do
             base=$(basename "$apk" -release-unsigned.apk)   # e.g. androidApp-arm64-v8a
             abi=${base#androidApp-}
             out="dist/Reliefy-${VERSION}-${abi}.apk"
             "$BT/zipalign" -p -f 4 "$apk" aligned.apk
-            "$BT/apksigner" sign --ks reliefy.jks --ks-key-alias "$KEY_ALIAS" \
-              --ks-pass env:KEYSTORE_PASSWORD --key-pass env:KEY_PASSWORD \
+            "$BT/apksigner" sign --ks .github/signing/reliefy-release.p12 --ks-key-alias reliefy \
+              --ks-pass env:KEYSTORE_PASSWORD --key-pass env:KEYSTORE_PASSWORD \
               --out "$out" aligned.apk
             "$BT/apksigner" verify "$out"
             rm -f aligned.apk
           done
-          rm -f reliefy.jks dist/*.idsig
+          rm -f dist/*.idsig
+          echo "signed=true" >> "$GITHUB_OUTPUT"
           ls -la dist
 
       - name: Upload APKs as build artifact
@@ -86,9 +87,10 @@ jobs:
         with:
           name: reliefy-apk
           path: dist/*.apk
+          if-no-files-found: error
 
       - name: Publish GitHub release
-        if: github.ref == 'refs/heads/main'
+        if: github.ref == 'refs/heads/main' && steps.sign.outputs.signed == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
           VERSION: ${{ steps.version.outputs.name }}
