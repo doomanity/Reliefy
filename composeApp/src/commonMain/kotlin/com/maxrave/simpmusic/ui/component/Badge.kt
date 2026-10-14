@@ -24,6 +24,7 @@ import com.maxrave.simpmusic.ui.theme.typo
 import org.jetbrains.compose.resources.stringResource
 import simpmusic.composeapp.generated.resources.Res
 import simpmusic.composeapp.generated.resources.ai
+import com.maxrave.simpmusic.ui.theme.roundedShape
 
 @Composable
 fun ExplicitBadge(modifier: Modifier = Modifier) {
@@ -45,7 +46,7 @@ fun AIBadge() {
         modifier = Modifier.height(24.dp)
             .padding(3.dp)
             .wrapContentWidth()
-            .clip(RoundedCornerShape(2.dp))
+            .clip(roundedShape(2.dp))
             .background(Color.LightGray),
         contentAlignment = Alignment.Center,
     ) {

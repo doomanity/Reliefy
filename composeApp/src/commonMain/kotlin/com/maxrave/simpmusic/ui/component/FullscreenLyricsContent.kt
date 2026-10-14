@@ -135,6 +135,7 @@ import simpmusic.composeapp.generated.resources.unavailable
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
+import com.maxrave.simpmusic.ui.theme.roundedShape
 
 // The gutter this sheet has always used for its lyrics column.
 private val FULLSCREEN_LYRICS_GUTTER = 50.dp
@@ -362,7 +363,7 @@ fun FullscreenLyricsContent(
                             modifier =
                                 Modifier
                                     .size(45.dp)
-                                    .clip(RoundedCornerShape(8.dp)),
+                                    .clip(roundedShape(8.dp)),
                         )
 
                         Spacer(modifier = Modifier.width(12.dp))
@@ -526,7 +527,7 @@ fun FullscreenLyricsContent(
                                                         .padding(
                                                             horizontal = 3.dp,
                                                         ).clip(
-                                                            RoundedCornerShape(8.dp),
+                                                            roundedShape(8.dp),
                                                         ),
                                                 color = Color.Gray,
                                                 trackColor = Color.DarkGray,
@@ -544,7 +545,7 @@ fun FullscreenLyricsContent(
                                                         .padding(
                                                             horizontal = 3.dp,
                                                         ).clip(
-                                                            RoundedCornerShape(8.dp),
+                                                            roundedShape(8.dp),
                                                         ),
                                                 color = Color.Gray,
                                                 trackColor = Color.DarkGray,
@@ -890,7 +891,7 @@ private fun FullscreenLyricsLandscape(
                                 Modifier
                                     .padding(horizontal = 20.dp)
                                     .size(artworkSize)
-                                    .clip(RoundedCornerShape(12.dp)),
+                                    .clip(roundedShape(12.dp)),
                         )
                         Spacer(modifier = Modifier.height(20.dp))
                         when (nowPlayingStyle) {
@@ -1016,7 +1017,7 @@ private fun FullscreenLyricsDesktopChrome(
             modifier =
                 Modifier
                     .height(48.dp)
-                    .liquidGlass(backdrop, RoundedCornerShape(24.dp)),
+                    .liquidGlass(backdrop, roundedShape(24.dp)),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             IconButton(onClick = onDismiss) {
@@ -1037,7 +1038,7 @@ private fun FullscreenLyricsDesktopChrome(
                     .height(48.dp)
                     // Static glass: the press swell scales the whole pill, which would slide the
                     // slider out from under a pointer that is dragging it.
-                    .liquidGlass(backdrop, RoundedCornerShape(24.dp), interactive = false)
+                    .liquidGlass(backdrop, roundedShape(24.dp), interactive = false)
                     .padding(end = 16.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {

@@ -21,6 +21,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.maxrave.simpmusic.extension.shimmer
 import com.maxrave.simpmusic.ui.theme.LocalAppColors
+import com.maxrave.simpmusic.ui.theme.roundedShape
 
 @Composable
 fun HomeItemShimmer() {
@@ -172,7 +173,7 @@ fun ShimmerSearchItem() {
         Box(
             modifier = Modifier
                 .size(56.dp)
-                .clip(RoundedCornerShape(4.dp))
+                .clip(roundedShape(4.dp))
                 .background(LocalAppColors.current.shimmerBackground)
                 .shimmer()
         )
@@ -185,7 +186,7 @@ fun ShimmerSearchItem() {
                 modifier = Modifier
                     .width(200.dp)
                     .height(16.dp)
-                    .clip(RoundedCornerShape(4.dp))
+                    .clip(roundedShape(4.dp))
                     .background(LocalAppColors.current.shimmerBackground)
                     .shimmer()
             )
@@ -196,7 +197,7 @@ fun ShimmerSearchItem() {
                 modifier = Modifier
                     .width(150.dp)
                     .height(14.dp)
-                    .clip(RoundedCornerShape(4.dp))
+                    .clip(roundedShape(4.dp))
                     .background(LocalAppColors.current.shimmerBackground)
                     .shimmer()
             )
@@ -207,7 +208,7 @@ fun ShimmerSearchItem() {
                 modifier = Modifier
                     .width(80.dp)
                     .height(12.dp)
-                    .clip(RoundedCornerShape(4.dp))
+                    .clip(roundedShape(4.dp))
                     .background(LocalAppColors.current.shimmerBackground)
                     .shimmer()
             )

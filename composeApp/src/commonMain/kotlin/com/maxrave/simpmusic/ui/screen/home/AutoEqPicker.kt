@@ -48,6 +48,7 @@ import simpmusic.composeapp.generated.resources.equalizer_autoeq_empty
 import simpmusic.composeapp.generated.resources.equalizer_autoeq_failed
 import simpmusic.composeapp.generated.resources.equalizer_autoeq_search
 import simpmusic.composeapp.generated.resources.equalizer_autoeq_unavailable
+import com.maxrave.simpmusic.ui.theme.roundedShape
 
 private val MENU_LIST_MAX_HEIGHT = 280.dp
 
@@ -83,7 +84,7 @@ fun AutoEqPicker(
         Row(
             modifier =
                 Modifier
-                    .clip(RoundedCornerShape(8.dp))
+                    .clip(roundedShape(8.dp))
                     .clickable { open = true }
                     .padding(horizontal = 8.dp, vertical = 6.dp),
             verticalAlignment = Alignment.CenterVertically,

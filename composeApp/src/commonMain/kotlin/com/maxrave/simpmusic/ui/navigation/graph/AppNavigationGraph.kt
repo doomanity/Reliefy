@@ -1,9 +1,5 @@
 package com.maxrave.simpmusic.ui.navigation.graph
 
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -15,6 +11,11 @@ import com.maxrave.simpmusic.ui.navigation.destination.home.AnalyticsDestination
 import com.maxrave.simpmusic.ui.navigation.destination.home.HomeDestination
 import com.maxrave.simpmusic.ui.navigation.destination.home.WrappedDestination
 import com.maxrave.simpmusic.ui.theme.ForceDarkContent
+import com.maxrave.simpmusic.ui.theme.LocalReliefyStyle
+import com.maxrave.simpmusic.ui.theme.navEnter
+import com.maxrave.simpmusic.ui.theme.navExit
+import com.maxrave.simpmusic.ui.theme.navPopEnter
+import com.maxrave.simpmusic.ui.theme.navPopExit
 import com.maxrave.simpmusic.ui.navigation.destination.library.LibraryDestination
 import com.maxrave.simpmusic.ui.navigation.destination.library.MixForYouDestination
 import com.maxrave.simpmusic.ui.navigation.destination.player.FullscreenDestination
@@ -39,21 +40,15 @@ fun AppNavigationGraph(
     showNowPlayingSheet: () -> Unit = {},
     onScrolling: (onTop: Boolean) -> Unit = {},
 ) {
+    // Reliefy: screen transitions follow Customize > Animation feel.
+    val motion = LocalReliefyStyle.current.motion
     NavHost(
         navController,
         startDestination = startDestination,
-        enterTransition = {
-            fadeIn() + slideInHorizontally { -it }
-        },
-        exitTransition = {
-            fadeOut() + slideOutHorizontally { it }
-        },
-        popEnterTransition = {
-            fadeIn() + slideInHorizontally { -it }
-        },
-        popExitTransition = {
-            fadeOut() + slideOutHorizontally { it }
-        },
+        enterTransition = { motion.navEnter() },
+        exitTransition = { motion.navExit() },
+        popEnterTransition = { motion.navPopEnter() },
+        popExitTransition = { motion.navPopExit() },
     ) {
         // Bottom bar destinations
         composable<HomeDestination> {

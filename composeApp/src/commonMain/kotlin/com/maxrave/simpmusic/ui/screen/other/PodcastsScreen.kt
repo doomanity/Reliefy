@@ -97,6 +97,7 @@ import simpmusic.composeapp.generated.resources.Res
 import simpmusic.composeapp.generated.resources.album_length
 import simpmusic.composeapp.generated.resources.no_description
 import simpmusic.composeapp.generated.resources.podcasts
+import com.maxrave.simpmusic.ui.theme.roundedShape
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -175,7 +176,7 @@ fun PodcastScreen(
                                         Modifier
                                             .fillMaxWidth()
                                             .height(260.dp)
-                                            .clip(RoundedCornerShape(8.dp))
+                                            .clip(roundedShape(8.dp))
                                             .angledGradientBackground(gradientColors, 25f),
                                 )
                                 Box(
@@ -227,7 +228,7 @@ fun PodcastScreen(
                                                 .height(250.dp)
                                                 .wrapContentWidth()
                                                 .align(Alignment.CenterHorizontally)
-                                                .clip(RoundedCornerShape(8.dp)),
+                                                .clip(roundedShape(8.dp)),
                                     )
                                     Box(
                                         modifier =

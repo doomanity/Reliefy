@@ -139,6 +139,7 @@ import com.maxrave.simpmusic.ui.icon.PlaylistAdd
 import com.maxrave.simpmusic.ui.icon.SimpIcons
 import com.maxrave.simpmusic.ui.navigation.destination.home.AppLogDestination
 import com.maxrave.simpmusic.ui.navigation.destination.home.CreditDestination
+import com.maxrave.simpmusic.ui.navigation.destination.home.CustomizeDestination
 import com.maxrave.simpmusic.ui.navigation.destination.login.DiscordLoginDestination
 import com.maxrave.simpmusic.ui.navigation.destination.login.LastfmLoginDestination
 import com.maxrave.simpmusic.ui.navigation.destination.login.LoginDestination
@@ -238,6 +239,8 @@ import simpmusic.composeapp.generated.resources.content_country
 import simpmusic.composeapp.generated.resources.contributor_email
 import simpmusic.composeapp.generated.resources.contributor_name
 import simpmusic.composeapp.generated.resources.crossfade
+import simpmusic.composeapp.generated.resources.customize_look
+import simpmusic.composeapp.generated.resources.customize_look_subtitle
 import simpmusic.composeapp.generated.resources.crossfade_auto
 import simpmusic.composeapp.generated.resources.crossfade_description
 import simpmusic.composeapp.generated.resources.crossfade_dj_mode
@@ -447,6 +450,7 @@ import simpmusic.composeapp.generated.resources.youtube_transcript
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import com.maxrave.simpmusic.ui.theme.roundedShape
 
 @OptIn(
     ExperimentalMaterial3Api::class,
@@ -718,6 +722,12 @@ fun SettingScreen(
                     )
                 }
                 SettingGroup(title = stringResource(Res.string.user_interface)) {
+                    // Reliefy: the Customize page (themes, color style, corners, motion, background).
+                    SettingItem(
+                        title = stringResource(Res.string.customize_look),
+                        subtitle = stringResource(Res.string.customize_look_subtitle),
+                        onClick = { navController.navigate(CustomizeDestination) },
+                    )
                     val themeModeLabels =
                         listOf(
                             DataStoreManager.THEME_MODE_SYSTEM to stringResource(Res.string.theme_mode_system),
@@ -2307,7 +2317,7 @@ fun SettingScreen(
                                 Modifier
                                     .fillMaxWidth()
                                     .height(8.dp)
-                                    .clip(RoundedCornerShape(8.dp))
+                                    .clip(roundedShape(8.dp))
                                     .onGloballyPositioned { layoutCoordinates ->
                                         with(localDensity) {
                                             width =

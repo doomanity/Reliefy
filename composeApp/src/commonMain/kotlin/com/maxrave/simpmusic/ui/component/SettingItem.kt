@@ -35,6 +35,7 @@ import com.maxrave.simpmusic.extension.greyScale
 import com.maxrave.simpmusic.getPlatform
 import com.maxrave.simpmusic.ui.theme.LocalIsDarkTheme
 import com.maxrave.simpmusic.ui.theme.typo
+import com.maxrave.simpmusic.ui.theme.roundedShape
 
 @Composable
 fun SettingItem(
@@ -200,6 +201,6 @@ private fun settingGroupColor(): Color =
         MaterialTheme.colorScheme.surfaceContainer
     }
 
-private val SettingGroupShape = RoundedCornerShape(20.dp)
+private val SettingGroupShape get() = roundedShape(20.dp)
 private val SettingRowPaddingHorizontal = 16.dp
 private val SettingDividerThickness = 0.5.dp

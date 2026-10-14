@@ -8,7 +8,9 @@ import androidx.compose.ui.graphics.Color
  * Brand seed color. The whole Material 3 ColorScheme is generated from this
  * color at runtime — see [AppTheme].
  */
-val seed = Color(0xFF8ECAE6)
+// Reliefy: a calm mint instead of SimpMusic's sky blue (0xFF8ECAE6, still offered as the
+// "SimpMusic Classic" theme preset on the Customize screen).
+val seed = Color(0xFF7FD8BE)
 
 // ===== Semantic colors (not derivable from the color scheme) =====
 

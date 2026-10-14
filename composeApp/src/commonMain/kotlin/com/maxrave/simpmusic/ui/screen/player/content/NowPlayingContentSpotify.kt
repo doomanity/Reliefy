@@ -186,6 +186,7 @@ import simpmusic.composeapp.generated.resources.show
 import simpmusic.composeapp.generated.resources.spotify_lyrics_provider
 import simpmusic.composeapp.generated.resources.unsynced
 import simpmusic.composeapp.generated.resources.view_count
+import com.maxrave.simpmusic.ui.theme.roundedShape
 
 // stripRichSyncTimestamps() lives in NowPlayingContentState.kt (same package) so both
 // content styles share one copy.
@@ -546,7 +547,7 @@ fun NowPlayingContentSpotify(
                                                 .background(Color.Transparent)
                                                 .shadow(
                                                     elevation = 3.dp,
-                                                    shape = RoundedCornerShape(8.dp),
+                                                    shape = roundedShape(8.dp),
                                                     spotColor =
                                                         state.spotShadowColor.copy(
                                                             alpha = 0.6f,
@@ -594,7 +595,7 @@ fun NowPlayingContentSpotify(
                                                         },
                                                     ).background(Color.Transparent)
                                                     .clip(
-                                                        RoundedCornerShape(8.dp),
+                                                        roundedShape(8.dp),
                                                     ).alpha(
                                                         if (!state.screenData.isVideo || !state.shouldShowVideo) 1f else 0f,
                                                     ),
@@ -617,7 +618,7 @@ fun NowPlayingContentSpotify(
                                             modifier =
                                                 Modifier
                                                     .aspectRatio(state.videoAspectRatio)
-                                                    .clip(RoundedCornerShape(8.dp))
+                                                    .clip(roundedShape(8.dp))
                                                     .background(Color.Black),
                                         ) {
                                             Box(Modifier.fillMaxSize()) {
@@ -773,7 +774,7 @@ fun NowPlayingContentSpotify(
                                                 .background(Color.Transparent)
                                                 .shadow(
                                                     elevation = 3.dp,
-                                                    shape = RoundedCornerShape(8.dp),
+                                                    shape = roundedShape(8.dp),
                                                     spotColor = Color.Black.copy(alpha = 0.4f),
                                                     ambientColor = Color.Transparent,
                                                 ),
@@ -807,7 +808,7 @@ fun NowPlayingContentSpotify(
                                                     .padding(3.dp)
                                                     .fillMaxWidth()
                                                     .aspectRatio(1f)
-                                                    .clip(RoundedCornerShape(8.dp)),
+                                                    .clip(roundedShape(8.dp)),
                                         )
                                     }
                                 }
@@ -1266,7 +1267,7 @@ fun NowPlayingContentSpotify(
                         ) {
                             ElevatedCard(
                                 onClick = {},
-                                shape = RoundedCornerShape(8.dp),
+                                shape = roundedShape(8.dp),
                                 colors =
                                     CardDefaults.elevatedCardColors().copy(
                                         containerColor = state.startColor.value,
@@ -1443,7 +1444,7 @@ fun NowPlayingContentSpotify(
                                 onClick = {
                                     actions.onNavigateToArtist()
                                 },
-                                shape = RoundedCornerShape(8.dp),
+                                shape = roundedShape(8.dp),
                                 colors =
                                     CardDefaults.elevatedCardColors().copy(
                                         containerColor = Color(0xFF212121),
@@ -1528,7 +1529,7 @@ fun NowPlayingContentSpotify(
                         AnimatedVisibility(visible = state.screenData.songInfoData != null) {
                             ElevatedCard(
                                 onClick = {},
-                                shape = RoundedCornerShape(8.dp),
+                                shape = roundedShape(8.dp),
                                 colors =
                                     CardDefaults.elevatedCardColors().copy(
                                         containerColor = state.startColor.value,
@@ -1733,7 +1734,7 @@ fun NowPlayingContentSpotify(
                                     .height(1.dp)
                                     .background(
                                         color = Color.Transparent,
-                                        shape = RoundedCornerShape(4.dp),
+                                        shape = roundedShape(4.dp),
                                     ),
                             color = Color.White,
                             trackColor = Color.Gray.copy(alpha = 0.4f),
@@ -1807,7 +1808,7 @@ internal fun NowPlayingTrackInfoRow(
                         .width(55.dp)
                         .padding(end = 10.dp)
                         .clip(
-                            RoundedCornerShape(4.dp),
+                            roundedShape(4.dp),
                         ).align(Alignment.CenterVertically),
             )
         }
@@ -1949,7 +1950,7 @@ internal fun ColumnScope.SpotifyPlaybackControls(
                                     .padding(
                                         horizontal = 3.dp,
                                     ).clip(
-                                        RoundedCornerShape(8.dp),
+                                        roundedShape(8.dp),
                                     ),
                             color = Color.Gray,
                             trackColor = Color.DarkGray,
@@ -1967,7 +1968,7 @@ internal fun ColumnScope.SpotifyPlaybackControls(
                                     .padding(
                                         horizontal = 3.dp,
                                     ).clip(
-                                        RoundedCornerShape(8.dp),
+                                        roundedShape(8.dp),
                                     ),
                             color = Color.Gray,
                             trackColor =

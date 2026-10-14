@@ -110,6 +110,7 @@ import simpmusic.composeapp.generated.resources.log_search_hint
 import simpmusic.composeapp.generated.resources.log_stack_trace_lines
 import simpmusic.composeapp.generated.resources.share
 import simpmusic.composeapp.generated.resources.space_mono_regular
+import com.maxrave.simpmusic.ui.theme.roundedShape
 
 private val POLL_INTERVAL = 1.seconds
 
@@ -261,7 +262,7 @@ fun AppLogScreen(
                     }
                     Box(
                         Modifier
-                            .clip(RoundedCornerShape(10.dp))
+                            .clip(roundedShape(10.dp))
                             .background(
                                 if (stickToBottom) MaterialTheme.colorScheme.primary.copy(alpha = 0.18f) else Color.Transparent,
                             ),
@@ -433,7 +434,7 @@ private fun LogSearchField(
         onValueChange = onQueryChange,
         modifier = modifier,
         singleLine = true,
-        shape = RoundedCornerShape(8.dp),
+        shape = roundedShape(8.dp),
         textStyle = typo().labelMedium.copy(color = MaterialTheme.colorScheme.onSurface),
         placeholder = { Text(stringResource(Res.string.log_search_hint), style = typo().labelMedium) },
         leadingIcon = { Icon(SimpIcons.Search, contentDescription = null) },
@@ -481,7 +482,7 @@ private fun MetaText(
         Box(
             Modifier
                 .size(6.dp)
-                .clip(RoundedCornerShape(3.dp))
+                .clip(roundedShape(3.dp))
                 .background(MaterialTheme.colorScheme.primary),
         )
         Spacer(Modifier.width(6.dp))
@@ -581,7 +582,7 @@ private fun LevelBadge(
     Box(
         modifier
             .size(16.dp)
-            .clip(RoundedCornerShape(4.dp))
+            .clip(roundedShape(4.dp))
             .background(color.copy(alpha = 0.18f)),
         contentAlignment = Alignment.Center,
     ) {
@@ -610,7 +611,7 @@ private fun ErrorCard(
     Column(
         Modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(20.dp))
+            .clip(roundedShape(20.dp))
             .background(cardColor.copy(alpha = 0.5f))
             .clickable(enabled = hasTrace, onClick = onToggle)
             .padding(start = 16.dp, end = 4.dp, top = 4.dp, bottom = 14.dp),
@@ -651,7 +652,7 @@ private fun ErrorCard(
                     Modifier
                         .padding(top = 10.dp, end = 12.dp)
                         .fillMaxWidth()
-                        .clip(RoundedCornerShape(12.dp))
+                        .clip(roundedShape(12.dp))
                         .background(MaterialTheme.colorScheme.surfaceContainerHigh)
                         .horizontalScroll(rememberScrollState())
                         .padding(horizontal = 12.dp, vertical = 10.dp),

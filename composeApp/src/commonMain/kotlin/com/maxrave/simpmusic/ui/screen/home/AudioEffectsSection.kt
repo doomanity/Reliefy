@@ -67,6 +67,7 @@ import simpmusic.composeapp.generated.resources.reverb_preset_plate
 import simpmusic.composeapp.generated.resources.reverb_preset_room
 import kotlin.math.abs
 import kotlin.math.roundToInt
+import com.maxrave.simpmusic.ui.theme.roundedShape
 
 /**
  * Width of the number beside each slider.
@@ -352,7 +353,7 @@ private fun formatKiloHertz(hz: Int): String {
 private fun EffectCard(content: @Composable ColumnScope.() -> Unit) {
     Surface(
         modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
-        shape = RoundedCornerShape(12.dp),
+        shape = roundedShape(12.dp),
         color = MaterialTheme.colorScheme.surfaceContainerHigh,
     ) {
         Column(

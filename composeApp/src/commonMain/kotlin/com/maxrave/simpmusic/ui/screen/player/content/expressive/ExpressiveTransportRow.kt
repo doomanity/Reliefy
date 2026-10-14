@@ -39,6 +39,7 @@ import com.maxrave.simpmusic.ui.icon.SimpIcons
 import com.maxrave.simpmusic.ui.icon.SkipNext
 import com.maxrave.simpmusic.ui.icon.SkipPrevious
 import com.maxrave.simpmusic.viewModel.UIEvent
+import com.maxrave.simpmusic.ui.theme.roundedShape
 
 // Base weights: prev 0.55 | play 1.2 | next 0.55. A pressed button grows ×1.15; because Row
 // normalizes weights, the other two shrink proportionally without any extra bookkeeping.
@@ -135,7 +136,7 @@ fun ExpressiveTransportRow(
                     onUIEvent(UIEvent.Previous)
                 }
             },
-            shape = RoundedCornerShape(34.dp),
+            shape = roundedShape(34.dp),
             color = colorScheme.secondaryContainer,
             interactionSource = prevInteraction,
             modifier =
@@ -215,7 +216,7 @@ fun ExpressiveTransportRow(
                     onUIEvent(UIEvent.Next)
                 }
             },
-            shape = RoundedCornerShape(34.dp),
+            shape = roundedShape(34.dp),
             color = colorScheme.secondaryContainer,
             interactionSource = nextInteraction,
             modifier =
@@ -260,7 +261,7 @@ private fun RowScope.ExpressiveToggleButton(
     val colorScheme = MaterialTheme.colorScheme
     Surface(
         onClick = onClick,
-        shape = RoundedCornerShape(34.dp),
+        shape = roundedShape(34.dp),
         color = if (active) colorScheme.primaryContainer else colorScheme.surfaceContainerHigh,
         modifier =
             Modifier

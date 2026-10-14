@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.painterResource
 import simpmusic.composeapp.generated.resources.Res
 import simpmusic.composeapp.generated.resources.mono
+import com.maxrave.simpmusic.ui.theme.roundedShape
 
 /**
  * The card's preferred width — a ceiling, not a fixed size.
@@ -92,7 +93,7 @@ internal fun ShareLyricsCard(
             modifier
                 .fillMaxWidth()
                 .widthIn(max = ShareLyricsCardMaxWidth)
-                .clip(RoundedCornerShape(20.dp))
+                .clip(roundedShape(20.dp))
                 // Not a flat fill: Spotify's card ramps its tint top-to-bottom, which is what stops
                 // a large block of one colour from reading as a coloured rectangle rather than a
                 // designed object.
@@ -105,7 +106,7 @@ internal fun ShareLyricsCard(
                     bitmap = artwork,
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
-                    modifier = Modifier.size(38.dp).clip(RoundedCornerShape(5.dp)),
+                    modifier = Modifier.size(38.dp).clip(roundedShape(5.dp)),
                 )
                 Spacer(modifier = Modifier.width(12.dp))
             }

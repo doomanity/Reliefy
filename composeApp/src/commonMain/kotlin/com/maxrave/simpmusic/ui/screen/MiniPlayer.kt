@@ -149,6 +149,7 @@ import simpmusic.composeapp.generated.resources.crossfading
 import simpmusic.composeapp.generated.resources.live_badge
 import kotlin.math.roundToInt
 import kotlin.math.roundToLong
+import com.maxrave.simpmusic.ui.theme.roundedShape
 
 private const val TAG = "MiniPlayer"
 
@@ -293,7 +294,7 @@ fun MiniPlayer(
                 modifier
                     .then(
                         if (isLiquidGlassEnabled == DataStoreManager.TRUE) {
-                            Modifier.liquidGlass(backdrop, layer, luminance, RoundedCornerShape(16.dp))
+                            Modifier.liquidGlass(backdrop, layer, luminance, roundedShape(16.dp))
                         } else {
                             Modifier
                         },
@@ -423,7 +424,7 @@ fun MiniPlayer(
                                     modifier =
                                         Modifier
                                             .size(if (isFlat) 26.dp else 40.dp)
-                                            .clip(if (isFlat) CircleShape else RoundedCornerShape(4.dp)),
+                                            .clip(if (isFlat) CircleShape else roundedShape(4.dp)),
                                 )
                             }
                             Spacer(modifier = Modifier.width(10.dp))
@@ -577,7 +578,7 @@ fun MiniPlayer(
                                     .height(1.dp)
                                     .background(
                                         color = Color.Transparent,
-                                        shape = RoundedCornerShape(4.dp),
+                                        shape = roundedShape(4.dp),
                                     ),
                             color = textColor,
                             trackColor = Color.Transparent,
@@ -751,7 +752,7 @@ fun MiniPlayer(
                             modifier =
                                 Modifier
                                     .size(32.dp)
-                                    .clip(RoundedCornerShape(6.dp))
+                                    .clip(roundedShape(6.dp))
                                     .hoverable(artworkInteraction),
                             contentAlignment = Alignment.Center,
                         ) {
@@ -1072,7 +1073,7 @@ fun MiniPlayer(
                                             .hoverable(popupInteraction)
                                             .width(44.dp)
                                             .height(VOLUME_POPUP_HEIGHT)
-                                            .clip(RoundedCornerShape(14.dp))
+                                            .clip(roundedShape(14.dp))
                                             // Theme surface, not `background` — that one animates to the
                                             // artwork's palette colour, which turned the popup olive green
                                             // for one cover and pink for the next.
@@ -1234,7 +1235,7 @@ private fun CapsuleProgress(
                                 Modifier
                                     .fillMaxWidth()
                                     .height(trackHeight)
-                                    .clip(RoundedCornerShape(8.dp)),
+                                    .clip(roundedShape(8.dp)),
                             // The capsule's own colours, not NowPlaying's hardcoded greys: this track
                             // sits on liquid glass whose tone follows the artwork behind it.
                             color = progressColor,

@@ -42,6 +42,7 @@ import com.maxrave.simpmusic.expect.ui.toByteArray
 import kotlin.math.max
 import kotlin.math.roundToInt
 import androidx.compose.ui.graphics.Canvas as GraphicsCanvas
+import com.maxrave.simpmusic.ui.theme.roundedShape
 
 /**
  * Longest side of the image handed back. Big enough for any cover slot that renders it, small
@@ -101,7 +102,7 @@ fun ImageCropperDialog(
         // occupy — everything else stays see-through onto whatever sits behind the dialog.
         Surface(
             modifier = Modifier.fillMaxWidth().widthIn(max = MAX_DIALOG_WIDTH),
-            shape = RoundedCornerShape(16.dp),
+            shape = roundedShape(16.dp),
             color = MaterialTheme.colorScheme.surface,
             tonalElevation = 6.dp,
         ) {
@@ -120,7 +121,7 @@ fun ImageCropperDialog(
                         Modifier
                             .fillMaxWidth()
                             .aspectRatio(STAGE_ASPECT)
-                            .clip(RoundedCornerShape(12.dp))
+                            .clip(roundedShape(12.dp))
                             .background(Color.Black)
                             .onSizeChanged { size ->
                                 if (size.width != frameSizePx && size.width > 0) {

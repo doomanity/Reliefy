@@ -52,6 +52,7 @@ import simpmusic.composeapp.generated.resources.library_artist_count
 import simpmusic.composeapp.generated.resources.library_favorite_empty_hint
 import simpmusic.composeapp.generated.resources.liked_songs_count
 import simpmusic.composeapp.generated.resources.most_played
+import com.maxrave.simpmusic.ui.theme.roundedShape
 
 /**
  * The four collections at the top of the Your library tab: Favorite as the wide card, then
@@ -225,7 +226,7 @@ private fun SleeveFan(
 ) {
     Box(modifier, contentAlignment = Alignment.Center) {
         if (thumbnails == null) return@Box
-        val shape = if (round) CircleShape else RoundedCornerShape(8.dp)
+        val shape = if (round) CircleShape else roundedShape(8.dp)
         val covers = thumbnails.take(slots)
         val count = if (covers.isEmpty()) slots else covers.size
         for (i in 0 until count) {
@@ -281,4 +282,4 @@ private fun EmptySleeve(
     )
 }
 
-private val CardShape = RoundedCornerShape(20.dp)
+private val CardShape get() = roundedShape(20.dp)

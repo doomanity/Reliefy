@@ -143,6 +143,7 @@ import simpmusic.composeapp.generated.resources.your_recently_played
 import simpmusic.composeapp.generated.resources.your_top_albums
 import simpmusic.composeapp.generated.resources.your_top_artists
 import simpmusic.composeapp.generated.resources.your_top_tracks
+import com.maxrave.simpmusic.ui.theme.roundedShape
 
 /**
  * How far a section's own content is inset from the block it sits in.
@@ -460,7 +461,7 @@ fun AnalyticsScreen(
         LiquidGlassIconButton(
             backdrop = headerBackdrop,
             imageVector = SimpIcons.ArrowBackIosNew,
-            shape = RoundedCornerShape(24.dp),
+            shape = roundedShape(24.dp),
             // A 48dp circle catches only a short arc of the default directional sweep and reads
             // as rimless; 1.dp is the smallest step that stays visible without looking a border.
             highlight = Highlight(width = 1.dp),
@@ -539,8 +540,8 @@ private fun DayRangePill(
             modifier =
                 Modifier
                     .height(48.dp)
-                    .liquidGlass(backdrop, RoundedCornerShape(24.dp), highlight = Highlight(width = 1.dp))
-                    .clip(RoundedCornerShape(24.dp))
+                    .liquidGlass(backdrop, roundedShape(24.dp), highlight = Highlight(width = 1.dp))
+                    .clip(roundedShape(24.dp))
                     .clickable { expanded = true }
                     .padding(horizontal = 18.dp),
             verticalAlignment = Alignment.CenterVertically,
@@ -792,7 +793,7 @@ private fun LandscapeHeader(
             ArtworkImage(
                 url = topTrack.second.thumbnails,
                 onBitmap = onBitmap,
-                modifier = Modifier.size(LANDSCAPE_ARTWORK).clip(RoundedCornerShape(8.dp)),
+                modifier = Modifier.size(LANDSCAPE_ARTWORK).clip(roundedShape(8.dp)),
             )
             Column(modifier = Modifier.weight(1f)) {
                 Text(

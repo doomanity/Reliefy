@@ -112,6 +112,7 @@ import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import kotlin.math.abs
+import com.maxrave.simpmusic.ui.theme.roundedShape
 
 private const val TAG = "NowPlayingScreen"
 
@@ -760,7 +761,7 @@ fun NowPlayingScreenContent(
                                     with(density) { windowSize.width.toDp() },
                                     with(density) { windowSize.height.toDp() },
                                 ).then(
-                                    if (windowIsRounded) Modifier.clip(RoundedCornerShape(12.dp)) else Modifier,
+                                    if (windowIsRounded) Modifier.clip(roundedShape(12.dp)) else Modifier,
                                 ),
                     ) {
                         FullscreenLyricsContent(

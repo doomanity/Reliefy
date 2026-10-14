@@ -293,6 +293,7 @@ import simpmusic.composeapp.generated.resources.your_youtube_cookie
 import simpmusic.composeapp.generated.resources.your_youtube_playlists
 import simpmusic.composeapp.generated.resources.youtube_transcript
 import simpmusic.composeapp.generated.resources.youtube_url
+import com.maxrave.simpmusic.ui.theme.roundedShape
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Sentinel value used by SleepTimerBottomSheet to signal "end of current song"
@@ -1626,7 +1627,7 @@ fun NowPlayingBottomSheet(
                                 Modifier
                                     .align(Alignment.CenterVertically)
                                     .size(44.dp)
-                                    .clip(RoundedCornerShape(6.dp)),
+                                    .clip(roundedShape(6.dp)),
                         )
                         Spacer(modifier = Modifier.width(12.dp))
                         Column(verticalArrangement = Arrangement.spacedBy(1.dp)) {
@@ -2295,7 +2296,7 @@ fun SleepTimerBottomSheet(
                                     customMinutes = ""
                                 },
                                 modifier = Modifier.weight(1f),
-                                shape = RoundedCornerShape(12.dp),
+                                shape = roundedShape(12.dp),
                                 colors =
                                     ButtonDefaults.outlinedButtonColors(
                                         containerColor = if (isSelected) seed.copy(alpha = 0.15f) else Color.Transparent,
@@ -2333,7 +2334,7 @@ fun SleepTimerBottomSheet(
                             customMinutes = ""
                         },
                         modifier = Modifier.weight(1f),
-                        shape = RoundedCornerShape(12.dp),
+                        shape = roundedShape(12.dp),
                         colors =
                             ButtonDefaults.outlinedButtonColors(
                                 containerColor = if (isEndSelected) seed.copy(alpha = 0.15f) else Color.Transparent,
@@ -2361,7 +2362,7 @@ fun SleepTimerBottomSheet(
                             selectedPreset = -1
                         },
                         modifier = Modifier.weight(1f),
-                        shape = RoundedCornerShape(12.dp),
+                        shape = roundedShape(12.dp),
                         colors =
                             ButtonDefaults.outlinedButtonColors(
                                 containerColor = if (isCustomSelected) seed.copy(alpha = 0.15f) else Color.Transparent,
@@ -2409,7 +2410,7 @@ fun SleepTimerBottomSheet(
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                             singleLine = true,
                             modifier = Modifier.fillMaxWidth(),
-                            shape = RoundedCornerShape(12.dp),
+                            shape = roundedShape(12.dp),
                         )
                     }
                 }
@@ -2458,7 +2459,7 @@ fun SleepTimerBottomSheet(
                         }
                     },
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(12.dp),
+                    shape = roundedShape(12.dp),
                     colors =
                         ButtonDefaults.buttonColors(
                             containerColor = seed,

@@ -2,4 +2,58 @@
 <!-- Strings added by Reliefy (fork of SimpMusic). Kept in their own file so upstream merges stay clean. -->
 <resources>
     <string name="reliefy_fork_credit">Reliefy is a customized fork of SimpMusic. All credit for the original app goes to maxrave-dev and contributors. Tap to open Reliefy on GitHub.</string>
+
+    <!-- Customize screen -->
+    <string name="customize">Customize</string>
+    <string name="customize_look">Customize look</string>
+    <string name="customize_look_subtitle">Themes, colors, corners, animations and song transitions</string>
+    <string name="customize_preview_song">Midnight Drive</string>
+    <string name="customize_preview_artist">Reliefy Radio</string>
+
+    <string name="customize_themes">Themes</string>
+    <string name="customize_themes_hint">One tap sets everything below. You can still tweak each part after.</string>
+    <string name="customize_custom_mix">Your mix</string>
+
+    <string name="customize_accent">Accent color</string>
+    <string name="customize_accent_default">Reliefy</string>
+    <string name="customize_accent_wallpaper">Wallpaper</string>
+    <string name="customize_accent_hint">Want an exact color? Settings, Theme color, Custom has a hex picker.</string>
+
+    <string name="customize_color_style">Color style</string>
+    <string name="color_style_default">Balanced</string>
+    <string name="color_style_vibrant">Vibrant</string>
+    <string name="color_style_expressive">Expressive</string>
+    <string name="color_style_muted">Muted</string>
+    <string name="color_style_true_color">True color</string>
+    <string name="color_style_rainbow">Rainbow</string>
+    <string name="color_style_fruit_salad">Fruit salad</string>
+    <string name="color_style_monochrome">Monochrome</string>
+
+    <string name="customize_corners">Corner roundness</string>
+    <string name="corners_sharp">Sharp</string>
+    <string name="corners_soft">Soft</string>
+    <string name="corners_round">Round</string>
+    <string name="corners_extra_round">Extra round</string>
+
+    <string name="customize_motion">Animation feel</string>
+    <string name="customize_motion_try">Tap the track to replay the animation</string>
+    <string name="motion_smooth">Smooth</string>
+    <string name="motion_smooth_desc">Calm slides with a gentle ease</string>
+    <string name="motion_snappy">Snappy</string>
+    <string name="motion_snappy_desc">Quick fades and zooms, no waiting around</string>
+    <string name="motion_bouncy">Bouncy</string>
+    <string name="motion_bouncy_desc">Springy and playful</string>
+    <string name="motion_reduced">Reduced</string>
+    <string name="motion_reduced_desc">Simple fades, easy on the eyes</string>
+
+    <string name="customize_background">Dark background</string>
+    <string name="customize_background_note">Used when the app is in dark mode</string>
+    <string name="bg_pure_black">Pure black</string>
+    <string name="bg_pure_black_desc">Deepest black, great on OLED screens</string>
+    <string name="bg_soft_dark">Soft dark</string>
+    <string name="bg_soft_dark_desc">Dark grey, tinted by your accent</string>
+
+    <string name="customize_transitions">Song transitions</string>
+    <string name="customize_crossfade_hint">Songs fade into each other instead of stopping and starting. Auto picks a length for each song, DJ style.</string>
+    <string name="customize_reset">Reset to default</string>
 </resources>

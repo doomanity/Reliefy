@@ -171,6 +171,7 @@ import simpmusic.composeapp.generated.resources.share
 import simpmusic.composeapp.generated.resources.singles
 import simpmusic.composeapp.generated.resources.unknown
 import simpmusic.composeapp.generated.resources.videos
+import com.maxrave.simpmusic.ui.theme.roundedShape
 
 @Composable
 @ExperimentalMaterial3Api
@@ -522,7 +523,7 @@ fun ArtistScreen(
                                     LiquidGlassIconButton(
                                         backdrop = artworkBackdrop,
                                         imageVector = SimpIcons.ArrowBackIosNew,
-                                        shape = RoundedCornerShape(24.dp),
+                                        shape = roundedShape(24.dp),
                                         // Matching the other three headers: the pill-style directional rim, thickened
                                         // from the 0.5.dp default so it stays visible around a 48dp circle.
                                         highlight = Highlight(width = 1.dp),
@@ -545,7 +546,7 @@ fun ArtistScreen(
                                                 .padding(12.dp)
                                                 .windowInsetsPadding(WindowInsets.statusBars)
                                                 .height(48.dp)
-                                                .liquidGlass(artworkBackdrop, RoundedCornerShape(24.dp)),
+                                                .liquidGlass(artworkBackdrop, roundedShape(24.dp)),
                                         verticalAlignment = Alignment.CenterVertically,
                                     ) {
                                         if (artistMotion != null) {
@@ -1257,7 +1258,7 @@ private fun ArtistSections(
         val urlHandler = LocalUriHandler.current
         ElevatedCard(
             modifier = Modifier.padding(horizontal = 20.dp),
-            shape = RoundedCornerShape(8.dp),
+            shape = roundedShape(8.dp),
             colors =
                 CardDefaults.elevatedCardColors().copy(
                     containerColor = descriptionTint.rgbFactor(0.5f),

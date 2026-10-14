@@ -44,6 +44,7 @@ import simpmusic.composeapp.generated.resources.Res
 import simpmusic.composeapp.generated.resources.taste_card_subtitle
 import simpmusic.composeapp.generated.resources.taste_card_title
 import simpmusic.composeapp.generated.resources.taste_share_title
+import com.maxrave.simpmusic.ui.theme.roundedShape
 
 /**
  * The taste reading as an image to save or send, in the shared [ShareImageSheet].
@@ -102,7 +103,7 @@ private fun ShareTasteCard(
             modifier
                 .fillMaxWidth()
                 .widthIn(max = ShareLyricsCardMaxWidth)
-                .clip(RoundedCornerShape(20.dp))
+                .clip(roundedShape(20.dp))
                 .background(Brush.verticalGradient(listOf(background, lerp(background, Color.Black, 0.28f))))
                 .padding(24.dp),
     ) {

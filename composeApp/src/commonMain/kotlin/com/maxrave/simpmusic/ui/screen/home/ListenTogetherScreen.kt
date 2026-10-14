@@ -135,6 +135,7 @@ import simpmusic.composeapp.generated.resources.lt_waiting_approval
 import simpmusic.composeapp.generated.resources.lt_waiting_approval_desc
 import simpmusic.composeapp.generated.resources.lt_you
 import simpmusic.composeapp.generated.resources.settings
+import com.maxrave.simpmusic.ui.theme.roundedShape
 
 /**
  * Listen Together.
@@ -144,8 +145,8 @@ import simpmusic.composeapp.generated.resources.settings
  * palette of hard-coded hexes. The first version of this screen invented its own #0F1319 dark and
  * its own accent, which is precisely why it read as pasted in from somewhere else.
  */
-private val CARD_SHAPE = RoundedCornerShape(24.dp)
-private val ROW_SHAPE = RoundedCornerShape(18.dp)
+private val CARD_SHAPE get() = roundedShape(24.dp)
+private val ROW_SHAPE get() = roundedShape(18.dp)
 
 /**
  * Below this the screen is one column. Two columns need room for two REAL columns — splitting a
@@ -458,7 +459,7 @@ private fun BoxScope.BackButton(
         // follows the theme — at light theme a white glyph sits on light glass (or on the light
         // fallback pill) and disappears. onSurface flips with the scheme.
         tint = MaterialTheme.colorScheme.onSurface,
-        shape = RoundedCornerShape(24.dp),
+        shape = roundedShape(24.dp),
         modifier =
             Modifier
                 .align(Alignment.TopStart)
@@ -771,7 +772,7 @@ private fun Suggestions(
                 Box(
                     Modifier
                         .size(44.dp)
-                        .clip(RoundedCornerShape(10.dp))
+                        .clip(roundedShape(10.dp))
                         .background(MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.12f)),
                 )
                 Column(Modifier.weight(1f)) {
@@ -1296,10 +1297,10 @@ private fun CodeInput(
                             Modifier
                                 .weight(1f)
                                 .height(52.dp)
-                                .clip(RoundedCornerShape(14.dp))
+                                .clip(roundedShape(14.dp))
                                 .background(MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.08f))
                                 .then(
-                                    if (isCaret) Modifier.border(2.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(14.dp)) else Modifier,
+                                    if (isCaret) Modifier.border(2.dp, MaterialTheme.colorScheme.primary, roundedShape(14.dp)) else Modifier,
                                 ).clickable { focusRequester.requestFocus() },
                         contentAlignment = Alignment.Center,
                     ) {

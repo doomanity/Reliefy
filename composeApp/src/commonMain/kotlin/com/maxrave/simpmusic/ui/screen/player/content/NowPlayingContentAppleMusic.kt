@@ -117,6 +117,7 @@ import com.maxrave.simpmusic.viewModel.UIEvent
 import kotlinx.coroutines.delay
 import org.koin.compose.koinInject
 import kotlin.math.pow
+import com.maxrave.simpmusic.ui.theme.roundedShape
 
 /**
  * The Apple Music Now Playing style: a style-internal dock (Lyrics · [Output | Listen Together] ·
@@ -281,7 +282,7 @@ fun NowPlayingContentAppleMusic(
                 LiquidGlassIconButton(
                     backdrop = panelBackdrop,
                     imageVector = state.dismissIcon,
-                    shape = RoundedCornerShape(24.dp),
+                    shape = roundedShape(24.dp),
                     // Same as AnalyticsScreen's back button: a 48dp circle catches only a short arc
                     // of the default directional sweep and reads as rimless. 1.dp is the smallest
                     // step that stays visible without looking like a plain border.
@@ -712,7 +713,7 @@ private fun AppleMusicMainView(
                                     error = rememberHolderPainter(),
                                     contentDescription = null,
                                     contentScale = ContentScale.Crop,
-                                    modifier = Modifier.size(55.dp).clip(RoundedCornerShape(4.dp)),
+                                    modifier = Modifier.size(55.dp).clip(roundedShape(4.dp)),
                                 )
                                 Spacer(modifier = Modifier.width(10.dp))
                                 Column(modifier = Modifier.weight(1f)) {
@@ -1021,7 +1022,7 @@ private fun AppleMusicArtworkPage(
                                     .size(width = frameWidth, height = frameHeight)
                                     // A vertical video stands clear of the screen edges, so it is rounded
                                     // like a card; wide ones run edge to edge and stay square.
-                                    .then(if (ratio < 1f) Modifier.clip(RoundedCornerShape(12.dp)) else Modifier),
+                                    .then(if (ratio < 1f) Modifier.clip(roundedShape(12.dp)) else Modifier),
                         ) {
                             MediaPlayerViewWithSubtitle(
                                 playerName = MAIN_PLAYER,

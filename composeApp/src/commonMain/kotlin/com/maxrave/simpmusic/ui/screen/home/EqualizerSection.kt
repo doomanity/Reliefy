@@ -56,6 +56,7 @@ import simpmusic.composeapp.generated.resources.equalizer_preset_custom
 import simpmusic.composeapp.generated.resources.equalizer_presets
 import simpmusic.composeapp.generated.resources.equalizer_reset
 import kotlin.math.roundToInt
+import com.maxrave.simpmusic.ui.theme.roundedShape
 
 /** Gain limits, in dB. Past this it stops being tone shaping and starts being distortion. */
 private const val BAND_RANGE_DB = 12f
@@ -114,7 +115,7 @@ fun EqualizerSection(viewModel: SettingsViewModel = koinViewModel()) {
     // the reset button read as three unrelated rows in the list.
     Surface(
         modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
-        shape = RoundedCornerShape(12.dp),
+        shape = roundedShape(12.dp),
         color = MaterialTheme.colorScheme.surfaceContainerHigh,
     ) {
         Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
@@ -135,7 +136,7 @@ fun EqualizerSection(viewModel: SettingsViewModel = koinViewModel()) {
                 Row(
                     modifier =
                         Modifier
-                            .clip(RoundedCornerShape(8.dp))
+                            .clip(roundedShape(8.dp))
                             .clickable { presetMenuOpen = true }
                             .padding(horizontal = 8.dp, vertical = 6.dp),
                     verticalAlignment = Alignment.CenterVertically,

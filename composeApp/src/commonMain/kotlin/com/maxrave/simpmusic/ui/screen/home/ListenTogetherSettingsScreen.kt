@@ -74,6 +74,7 @@ import simpmusic.composeapp.generated.resources.lt_default_server_name
 import simpmusic.composeapp.generated.resources.lt_save_server
 import simpmusic.composeapp.generated.resources.lt_server
 import simpmusic.composeapp.generated.resources.lt_unblock
+import com.maxrave.simpmusic.ui.theme.roundedShape
 
 /** Matches ListenTogetherScreen — a phone-width column, centred in a wide window. */
 private const val CONTENT_MAX_WIDTH_DP = 560
@@ -197,8 +198,8 @@ fun ListenTogetherSettingsScreen(
                             Modifier
                                 .fillMaxWidth()
                                 .height(50.dp)
-                                .clip(RoundedCornerShape(14.dp))
-                                .border(1.dp, MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.20f), RoundedCornerShape(14.dp)),
+                                .clip(roundedShape(14.dp))
+                                .border(1.dp, MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.20f), roundedShape(14.dp)),
                         decorationBox = { inner ->
                             Box(
                                 modifier = Modifier.fillMaxSize().padding(horizontal = 15.dp),
@@ -289,7 +290,7 @@ fun ListenTogetherSettingsScreen(
             backdrop = backdrop,
             imageVector = SimpIcons.ArrowBackIosNew,
             tint = MaterialTheme.colorScheme.onSurface,
-            shape = RoundedCornerShape(24.dp),
+            shape = roundedShape(24.dp),
             modifier =
                 Modifier
                     .align(Alignment.TopStart)
@@ -318,7 +319,7 @@ private fun ServerOption(
         modifier =
             Modifier
                 .fillMaxWidth()
-                .clip(RoundedCornerShape(16.dp))
+                .clip(roundedShape(16.dp))
                 .then(if (selected) Modifier.background(MaterialTheme.colorScheme.primary.copy(alpha = 0.07f)) else Modifier)
                 .border(
                     1.dp,
@@ -329,7 +330,7 @@ private fun ServerOption(
                     } else {
                         MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.20f)
                     },
-                    RoundedCornerShape(16.dp),
+                    roundedShape(16.dp),
                 ).clickable { onClick() }
                 .padding(15.dp),
         verticalAlignment = Alignment.CenterVertically,
@@ -394,7 +395,7 @@ private fun LtSwitch(checked: Boolean) {
         modifier =
             Modifier
                 .size(width = 44.dp, height = 26.dp)
-                .clip(RoundedCornerShape(13.dp))
+                .clip(roundedShape(13.dp))
                 .background(if (checked) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.26f)),
     ) {
         Box(
@@ -426,8 +427,8 @@ private fun SmallAction(
         modifier =
             Modifier
                 .height(30.dp)
-                .clip(RoundedCornerShape(15.dp))
-                .border(1.dp, MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.38f), RoundedCornerShape(15.dp))
+                .clip(roundedShape(15.dp))
+                .border(1.dp, MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.38f), roundedShape(15.dp))
                 .clickable { onClick() }
                 .padding(horizontal = 13.dp),
         contentAlignment = Alignment.Center,

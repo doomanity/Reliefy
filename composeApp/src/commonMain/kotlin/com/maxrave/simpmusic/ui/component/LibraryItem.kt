@@ -77,6 +77,7 @@ import simpmusic.composeapp.generated.resources.no_playlists_downloaded
 import simpmusic.composeapp.generated.resources.radio
 import simpmusic.composeapp.generated.resources.recently_added
 import com.maxrave.domain.mediaservice.handler.PlaylistType as DomainPlaylistType
+import com.maxrave.simpmusic.ui.theme.roundedShape
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -285,7 +286,7 @@ fun LibraryItem(
                                             Modifier
                                                 .fillMaxSize()
                                                 .clip(
-                                                    RoundedCornerShape(8.dp),
+                                                    roundedShape(8.dp),
                                                 ),
                                     )
                                     Column(

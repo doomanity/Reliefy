@@ -13,9 +13,9 @@ import androidx.compose.material3.RippleConfiguration
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
-import com.materialkolor.PaletteStyle
 import com.materialkolor.rememberDynamicColorScheme
 import com.maxrave.domain.manager.DataStoreManager
 import com.maxrave.simpmusic.expect.ui.SystemBarAppearanceEffect
@@ -122,11 +122,20 @@ fun AppTheme(
     themeColorSource: String = DataStoreManager.THEME_COLOR_DEFAULT,
     customThemeColor: Color? = null,
     liquidGlassEnabled: Boolean = true,
+    reliefyStyle: ReliefyStyle = ReliefyStyle.Default,
     content:
         @Composable()
         () -> Unit,
 ) {
     val isDark = isDarkTheme(themeMode)
+    // Reliefy: Customize settings. Pure black is SimpMusic's original dark background.
+    val pureBlack = reliefyStyle.background == BackgroundStyle.PURE_BLACK
+    val paletteStyle = reliefyStyle.colorStyle.paletteStyle
+    // Set before the content composes, so every rounded corner below reads the new scale in this
+    // same pass instead of one frame later.
+    setCornerScale(reliefyStyle.corners.scale)
+    val shapes = remember(reliefyStyle.corners) { reliefyShapes(reliefyStyle.corners.scale) }
+    val motionScheme = remember(reliefyStyle.motion) { reliefyStyle.motion.motionScheme() }
     val wallpaperScheme =
         if (themeColorSource == DataStoreManager.THEME_COLOR_WALLPAPER) {
             platformDynamicColorScheme(isDark)
@@ -146,8 +155,8 @@ fun AppTheme(
             ?: rememberDynamicColorScheme(
                 seedColor = seedColor,
                 isDark = isDark,
-                isAmoled = isDark,
-                style = PaletteStyle.TonalSpot,
+                isAmoled = isDark && pureBlack,
+                style = paletteStyle,
                 modifyColorScheme = { cs -> if (isDark) cs else cs.withNeutralLightSurfaces() },
             )
     // Immersive screens stay dark even at light theme (see [ForceDarkContent]). Resolve their scheme
@@ -159,15 +168,18 @@ fun AppTheme(
             rememberDynamicColorScheme(
                 seedColor = seedColor,
                 isDark = true,
-                isAmoled = true,
-                style = PaletteStyle.TonalSpot,
+                isAmoled = pureBlack,
+                style = paletteStyle,
             )
         }
     SystemBarAppearanceEffect(isDark)
     MaterialExpressiveTheme(
         colorScheme = colorScheme,
+        motionScheme = motionScheme,
+        shapes = shapes,
         content = {
             CompositionLocalProvider(
+                LocalReliefyStyle provides reliefyStyle,
                 LocalRippleConfiguration provides SoftRippleConfiguration,
                 LocalContentColor provides colorScheme.onSurfaceVariant,
                 LocalAppColors provides if (isDark) DarkAppColors else LightAppColors,

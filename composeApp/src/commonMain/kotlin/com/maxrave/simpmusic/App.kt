@@ -99,6 +99,7 @@ import com.maxrave.simpmusic.ui.screen.player.NowPlayingScreen
 import com.maxrave.simpmusic.ui.screen.player.NowPlayingScreenContent
 import com.maxrave.simpmusic.ui.theme.AppTheme
 import com.maxrave.simpmusic.ui.theme.ForceDarkContent
+import com.maxrave.simpmusic.ui.theme.rememberReliefyStyle
 import com.maxrave.simpmusic.ui.theme.desktopPanelDark
 import com.maxrave.simpmusic.ui.theme.desktopWindowDark
 import com.maxrave.simpmusic.ui.theme.desktopWindowLight
@@ -139,6 +140,7 @@ import simpmusic.composeapp.generated.resources.update_available
 import simpmusic.composeapp.generated.resources.update_message
 import simpmusic.composeapp.generated.resources.yes
 import kotlin.time.ExperimentalTime
+import com.maxrave.simpmusic.ui.theme.roundedShape
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalTime::class, ExperimentalFoundationApi::class)
 @Composable
@@ -170,6 +172,8 @@ fun App(
     val themeMode by viewModel.getThemeMode().collectAsStateWithLifecycle(DataStoreManager.THEME_MODE_DARK)
     val themeColorSource by viewModel.getThemeColorSource().collectAsStateWithLifecycle(DataStoreManager.THEME_COLOR_DEFAULT)
     val customThemeColorHex by viewModel.getCustomThemeColor().collectAsStateWithLifecycle(DataStoreManager.DEFAULT_THEME_COLOR_HEX)
+    // Reliefy: Customize screen settings (color style, corners, motion, background).
+    val reliefyStyle = rememberReliefyStyle()
     val isOfficialBuild by viewModel.isOfficialBuild.collectAsStateWithLifecycle()
     // MiniPlayer visibility: derived, never stored.
     //
@@ -493,6 +497,7 @@ fun App(
         // Desktop is unconditionally true — the liquid-glass setting row is Android-only, and the
         // Desktop capsule player is glass by design. Same rule as MiniPlayer's useGlassSurface.
         liquidGlassEnabled = isLiquidGlassEnabled == TRUE || getPlatform() == Platform.Desktop,
+        reliefyStyle = reliefyStyle,
     ) {
         if (!isOfficialBuild) {
             UnofficialBuildScreen()
@@ -625,7 +630,7 @@ fun App(
                                     if (isDesktopShell) {
                                         Modifier
                                             .padding(8.dp)
-                                            .clip(RoundedCornerShape(12.dp))
+                                            .clip(roundedShape(12.dp))
                                             .background(desktopPanel)
                                     } else {
                                         Modifier
@@ -758,7 +763,7 @@ fun App(
                                                     Modifier
                                                 },
                                             ).clip(
-                                                RoundedCornerShape(12.dp),
+                                                roundedShape(12.dp),
                                             ).then(
                                                 if (isDesktopShell) {
                                                     Modifier.background(desktopPanel)

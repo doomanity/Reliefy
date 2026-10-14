@@ -66,6 +66,7 @@ import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.roundToInt
 import kotlin.math.sin
+import com.maxrave.simpmusic.ui.theme.roundedShape
 
 /**
  * Card 08 — the five behaviour axes as a radar, and the name that falls out of the highest one.
@@ -240,7 +241,7 @@ private fun RadarLegend(
             Box(
                 Modifier
                     .size(width = SWATCH_WIDTH, height = 2.5.dp)
-                    .clip(RoundedCornerShape(2.dp))
+                    .clip(roundedShape(2.dp))
                     .background(MaterialTheme.colorScheme.primary),
             )
             Text(text = "$year", style = legendStyle)

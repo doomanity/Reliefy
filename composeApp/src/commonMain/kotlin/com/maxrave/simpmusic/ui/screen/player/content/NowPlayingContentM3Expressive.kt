@@ -126,6 +126,7 @@ import simpmusic.composeapp.generated.resources.Res
 import simpmusic.composeapp.generated.resources.audio_output
 import simpmusic.composeapp.generated.resources.crossfading
 import simpmusic.composeapp.generated.resources.now_playing_upper
+import com.maxrave.simpmusic.ui.theme.roundedShape
 
 /**
  * The Material 3 Expressive ("Tonal pills") Now Playing style.
@@ -392,7 +393,7 @@ private fun NowPlayingM3ExpressiveLayout(
                     }
                     IconButton(
                         onClick = { actions.onShowMoreSheet() },
-                        shape = RoundedCornerShape(14.dp),
+                        shape = roundedShape(14.dp),
                         colors =
                             IconButtonDefaults.iconButtonColors(
                                 containerColor = colorScheme.surfaceContainerHigh,
@@ -711,7 +712,7 @@ internal fun ExpressiveTrackInfoRow(
                         .width(55.dp)
                         .padding(end = 10.dp)
                         .clip(
-                            RoundedCornerShape(4.dp),
+                            roundedShape(4.dp),
                         ).align(Alignment.CenterVertically),
             )
         }
@@ -954,7 +955,7 @@ private fun ExpressiveConnectedGroup(
     val colorScheme = MaterialTheme.colorScheme
     val startCap = RoundedCornerShape(topStart = 24.dp, topEnd = 6.dp, bottomEnd = 6.dp, bottomStart = 24.dp)
     val endCap = RoundedCornerShape(topStart = 6.dp, topEnd = 24.dp, bottomEnd = 24.dp, bottomStart = 6.dp)
-    val middle = RoundedCornerShape(6.dp)
+    val middle = roundedShape(6.dp)
     Row(
         horizontalArrangement = Arrangement.spacedBy(3.dp),
         verticalAlignment = Alignment.CenterVertically,

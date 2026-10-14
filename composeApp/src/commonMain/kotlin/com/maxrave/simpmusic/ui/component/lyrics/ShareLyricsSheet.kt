@@ -78,6 +78,7 @@ import simpmusic.composeapp.generated.resources.share_lyrics_selected_count
 import simpmusic.composeapp.generated.resources.share_lyrics_share_action
 import simpmusic.composeapp.generated.resources.share_lyrics_share_failed
 import kotlin.random.Random
+import com.maxrave.simpmusic.ui.theme.roundedShape
 
 /**
  * Pick up to [MAX_SHARE_LYRIC_LINES] consecutive lines, preview the card they make, then save or
@@ -356,7 +357,7 @@ private fun ShareLyricsLineRow(
             Modifier
                 .fillMaxWidth()
                 .padding(vertical = 3.dp)
-                .clip(RoundedCornerShape(10.dp))
+                .clip(roundedShape(10.dp))
                 .background(if (selected) content else Color.Transparent)
                 .clickable(onClick = onClick)
                 .padding(horizontal = 14.dp, vertical = 12.dp),

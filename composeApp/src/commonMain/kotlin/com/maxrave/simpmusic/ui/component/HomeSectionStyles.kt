@@ -46,6 +46,7 @@ import com.maxrave.simpmusic.ui.theme.ForceDarkContent
 import com.maxrave.simpmusic.ui.theme.typo
 import com.maxrave.simpmusic.viewModel.HomeViewModel
 import kotlinx.coroutines.launch
+import com.maxrave.simpmusic.ui.theme.roundedShape
 
 // Rows at least this wide (tablets, desktop) get the wide-window hero.
 private const val WIDE_LAYOUT_MIN_DP = 600
@@ -102,7 +103,7 @@ fun HomeDiscoverSection(
                     Modifier
                         .fillMaxSize()
                         .then(hoverModifier)
-                        .maskClip(RoundedCornerShape(28.dp))
+                        .maskClip(roundedShape(28.dp))
                         .combinedClickable(
                             onClick = play,
                             onLongClick = { sheetTrack = song.toTrack() },

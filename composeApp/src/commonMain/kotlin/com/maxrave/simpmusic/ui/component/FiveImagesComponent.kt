@@ -33,6 +33,7 @@ import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.maxrave.simpmusic.extension.artworkScrimBrush
 import com.maxrave.simpmusic.ui.theme.typo
+import com.maxrave.simpmusic.ui.theme.roundedShape
 
 /**
  * The top five, as one mosaic rather than a row of equal cards.
@@ -51,7 +52,7 @@ fun FiveImagesComponent(
     modifier: Modifier,
     images: List<ImageData>,
     landscape: Boolean = false,
-    shape: Shape = RoundedCornerShape(12.dp),
+    shape: Shape = roundedShape(12.dp),
 ) {
     if (images.isEmpty()) return
     // Rounded on the OUTSIDE of the block only. The tiles stay flush with each other on purpose —

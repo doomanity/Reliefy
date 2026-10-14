@@ -32,6 +32,7 @@ import simpmusic.composeapp.generated.resources.footguns_promo_message
 import simpmusic.composeapp.generated.resources.footguns_promo_title
 import simpmusic.composeapp.generated.resources.give_a_star
 import simpmusic.composeapp.generated.resources.later
+import com.maxrave.simpmusic.ui.theme.roundedShape
 
 private const val FOOTGUNS_REPO_URL = "https://github.com/maxrave-dev/kotlin-footguns"
 
@@ -101,7 +102,7 @@ fun FootgunsStarDialog(
                             Modifier
                                 .fillMaxWidth()
                                 .aspectRatio(SOCIAL_IMAGE_ASPECT_RATIO)
-                                .clip(RoundedCornerShape(12.dp)),
+                                .clip(roundedShape(12.dp)),
                     )
                     Spacer(Modifier.height(14.dp))
                 }

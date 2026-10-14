@@ -19,6 +19,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.maxrave.simpmusic.ui.theme.LocalIsDarkTheme
+import com.maxrave.simpmusic.ui.theme.roundedShape
 
 @Composable
 fun SimpMusicChartButton(
@@ -34,7 +35,7 @@ fun SimpMusicChartButton(
     Surface(
         modifier = modifier,
         onClick = onClick,
-        shape = RoundedCornerShape(24.dp),
+        shape = roundedShape(24.dp),
         color = containerColor,
         border = BorderStroke(1.dp, borderColor)
     ) {

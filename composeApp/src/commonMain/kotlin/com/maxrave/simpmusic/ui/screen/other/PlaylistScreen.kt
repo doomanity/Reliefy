@@ -161,6 +161,7 @@ import simpmusic.composeapp.generated.resources.playlist
 import simpmusic.composeapp.generated.resources.radio
 import simpmusic.composeapp.generated.resources.search
 import simpmusic.composeapp.generated.resources.unlimited
+import com.maxrave.simpmusic.ui.theme.roundedShape
 
 @OptIn(ExperimentalCoroutinesApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -516,7 +517,7 @@ fun PlaylistScreen(
                                                         modifier =
                                                             Modifier
                                                                 .height(48.dp)
-                                                                .liquidGlass(artworkBackdrop, RoundedCornerShape(24.dp)),
+                                                                .liquidGlass(artworkBackdrop, roundedShape(24.dp)),
                                                         verticalAlignment = Alignment.CenterVertically,
                                                     ) {
                                                         if (!data.isRadio) {
@@ -600,7 +601,7 @@ fun PlaylistScreen(
                                                             modifier =
                                                                 Modifier
                                                                     .size(280.dp)
-                                                                    .clip(RoundedCornerShape(8.dp)),
+                                                                    .clip(roundedShape(8.dp)),
                                                         )
                                                         Column(
                                                             modifier = Modifier.weight(1f),
@@ -790,7 +791,7 @@ fun PlaylistScreen(
                                                     LiquidGlassIconButton(
                                                         backdrop = headerBackdrop,
                                                         imageVector = SimpIcons.ArrowBackIosNew,
-                                                        shape = RoundedCornerShape(24.dp),
+                                                        shape = roundedShape(24.dp),
                                                         // Same directional style as the like/⋯ pill, a touch thicker. The default
                                                         // width of 0.5.dp becomes a ~2px stroke (HighlightModifier: ceil(width.toPx()) * 2),
                                                         // which reads along the pill's long edge but vanishes around a 48dp circle. 1.dp
@@ -813,7 +814,7 @@ fun PlaylistScreen(
                                                             .windowInsetsPadding(WindowInsets.statusBars)
                                                             .padding(end = 32.dp, top = 16.dp)
                                                             .height(48.dp)
-                                                            .liquidGlass(headerBackdrop, RoundedCornerShape(24.dp)),
+                                                            .liquidGlass(headerBackdrop, roundedShape(24.dp)),
                                                     verticalAlignment = Alignment.CenterVertically,
                                                 ) {
                                                     if (!data.isRadio) {

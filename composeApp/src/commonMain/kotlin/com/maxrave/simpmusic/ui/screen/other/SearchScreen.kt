@@ -168,6 +168,7 @@ import simpmusic.composeapp.generated.resources.search_for_songs_artists_albums_
 import simpmusic.composeapp.generated.resources.song
 import simpmusic.composeapp.generated.resources.videos
 import simpmusic.composeapp.generated.resources.what_do_you_want_to_listen_to
+import com.maxrave.simpmusic.ui.theme.roundedShape
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -469,7 +470,7 @@ fun SearchScreen(
                                                 }
                                             },
                                         ).padding(horizontal = 12.dp, vertical = 2.dp)
-                                        .clip(RoundedCornerShape(8.dp)),
+                                        .clip(roundedShape(8.dp)),
                                 verticalAlignment = Alignment.CenterVertically,
                             ) {
                                 Text(
@@ -1139,7 +1140,7 @@ fun SearchScreen(
                     .onFocusChanged {
                         isFocused = it.isFocused
                     }.padding(horizontal = 16.dp),
-            shape = RoundedCornerShape(8.dp),
+            shape = roundedShape(8.dp),
             // See the note on SongSelectionTopAppBar above — the Column owns the status-bar inset.
             windowInsets = WindowInsets(0),
             content = {},
@@ -1218,7 +1219,7 @@ fun SuggestItemRow(
             modifier =
                 Modifier
                     .size(40.dp)
-                    .clip(RoundedCornerShape(4.dp)),
+                    .clip(roundedShape(4.dp)),
         ) {
             AsyncImage(
                 model =
@@ -1240,7 +1241,7 @@ fun SuggestItemRow(
                             if (searchResult is ArtistsResult) {
                                 CircleShape
                             } else {
-                                RoundedCornerShape(4.dp)
+                                roundedShape(4.dp)
                             },
                         ),
             )

@@ -36,6 +36,7 @@ import androidx.compose.ui.graphics.drawscope.scale
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
+import com.maxrave.simpmusic.ui.theme.roundedShape
 
 /**
  * A [Surface] with an infinite border animation.
@@ -50,7 +51,7 @@ fun InfiniteBorderAnimationView(
     backgroundColor: Color = MaterialTheme.colorScheme.background,
     contentPadding: Dp = 0.dp,
     borderWidth: Dp = 1.dp,
-    shape: Shape = RoundedCornerShape(12.dp),
+    shape: Shape = roundedShape(12.dp),
     oneCircleDurationMillis: Int = 3000,
     content: @Composable () -> Unit,
 ) {
@@ -123,7 +124,7 @@ fun LimitedBorderAnimationView(
     backgroundColor: Color = MaterialTheme.colorScheme.background,
     contentPadding: Dp = 0.dp,
     borderWidth: Dp = 1.dp,
-    shape: Shape = RoundedCornerShape(12.dp),
+    shape: Shape = roundedShape(12.dp),
     oneCircleDurationMillis: Int = 3000,
     interactionNumber: Int = 1,
     content: @Composable () -> Unit,

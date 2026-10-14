@@ -33,6 +33,7 @@ import com.maxrave.simpmusic.viewModel.NowPlayingScreenData
 import org.jetbrains.compose.resources.stringResource
 import simpmusic.composeapp.generated.resources.Res
 import simpmusic.composeapp.generated.resources.lyrics_offset_value
+import com.maxrave.simpmusic.ui.theme.roundedShape
 
 // One tap moves the lyrics by this much: fine enough for Bluetooth latency, which is what the
 // offset exists for. A sheet that is seconds off is still quicker to type in Settings.
@@ -112,7 +113,7 @@ fun LyricsOffsetFloatingControl(
                 LiquidGlassContainer(
                     backdrop = backdrop,
                     modifier = Modifier.padding(end = 8.dp).height(48.dp),
-                    shape = RoundedCornerShape(24.dp),
+                    shape = roundedShape(24.dp),
                     interactive = false,
                 ) {
                     LyricsOffsetBar(

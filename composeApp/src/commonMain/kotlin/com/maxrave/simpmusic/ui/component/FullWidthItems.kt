@@ -104,6 +104,7 @@ import simpmusic.composeapp.generated.resources.podcasts
 import simpmusic.composeapp.generated.resources.radio
 import simpmusic.composeapp.generated.resources.you
 import kotlin.math.roundToInt
+import com.maxrave.simpmusic.ui.theme.roundedShape
 
 /**
  * This is the song item in the playlist or other places.
@@ -293,7 +294,7 @@ fun SongFullWidthItems(
                                 modifier =
                                     Modifier
                                         .fillMaxSize()
-                                        .clip(RoundedCornerShape(4.dp)),
+                                        .clip(roundedShape(4.dp)),
                             )
                         } else {
                             Text(
@@ -454,7 +455,7 @@ fun SuggestItems(
                                 Modifier
                                     .wrapContentHeight()
                                     .fillMaxWidth()
-                                    .clip(RoundedCornerShape(4.dp)),
+                                    .clip(roundedShape(4.dp)),
                         )
                     }
                 }
@@ -608,7 +609,7 @@ fun PlaylistFullWidthItems(
                     modifier =
                         Modifier
                             .fillMaxSize()
-                            .clip(RoundedCornerShape(4.dp)),
+                            .clip(roundedShape(4.dp)),
                 )
             }
             Column(

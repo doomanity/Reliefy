@@ -95,6 +95,7 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import simpmusic.composeapp.generated.resources.Res
 import simpmusic.composeapp.generated.resources.five_seconds
+import com.maxrave.simpmusic.ui.theme.roundedShape
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -552,7 +553,7 @@ fun FullscreenPlayer(
                                                             .padding(
                                                                 horizontal = 3.dp,
                                                             ).clip(
-                                                                RoundedCornerShape(8.dp),
+                                                                roundedShape(8.dp),
                                                             ),
                                                     color = Color.Gray,
                                                     trackColor = Color.DarkGray,
@@ -570,7 +571,7 @@ fun FullscreenPlayer(
                                                             .padding(
                                                                 horizontal = 3.dp,
                                                             ).clip(
-                                                                RoundedCornerShape(8.dp),
+                                                                roundedShape(8.dp),
                                                             ),
                                                     color = Color.Gray,
                                                     trackColor = Color.DarkGray,

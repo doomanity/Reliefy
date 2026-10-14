@@ -78,6 +78,7 @@ import simpmusic.composeapp.generated.resources.Res
 import simpmusic.composeapp.generated.resources.continue_playing
 import simpmusic.composeapp.generated.resources.endless_queue
 import simpmusic.composeapp.generated.resources.now_playing
+import com.maxrave.simpmusic.ui.theme.roundedShape
 
 /**
  * The QUEUE body: compact header, [Info][PlaylistAdd][Shuffle][Repeat] pills, a "Continue
@@ -370,7 +371,7 @@ private fun AppleMusicQueuePill(
                 // the full inflate would visibly overlap its neighbour on every tap.
                 .appleMusicPressInflate(pressedScale = 1.08f)
                 .height(40.dp)
-                .clip(RoundedCornerShape(20.dp))
+                .clip(roundedShape(20.dp))
                 .background(if (active) activeContainer else AppleMusicPillInactive)
                 .clickable(onClick = onClick),
         contentAlignment = Alignment.Center,

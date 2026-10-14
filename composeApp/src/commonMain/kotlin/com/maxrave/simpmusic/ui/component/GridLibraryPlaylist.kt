@@ -69,6 +69,7 @@ import org.jetbrains.compose.resources.stringResource
 import simpmusic.composeapp.generated.resources.Res
 import simpmusic.composeapp.generated.resources.create
 import kotlin.math.roundToInt
+import com.maxrave.simpmusic.ui.theme.roundedShape
 
 /**
  * Columns for every grid built on [GridLibraryPlaylist] — the Library tabs, Wrapped and Mix for you.
@@ -184,7 +185,7 @@ internal inline fun <reified T> GridLibraryPlaylist(
                                         Modifier
                                             .fillMaxWidth()
                                             .aspectRatio(1f)
-                                            .clip(RoundedCornerShape(10.dp))
+                                            .clip(roundedShape(10.dp))
                                             .angledGradientBackground(
                                                 colors =
                                                     listOf(

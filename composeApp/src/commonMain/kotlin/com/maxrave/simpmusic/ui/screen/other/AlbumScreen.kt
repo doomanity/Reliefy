@@ -133,6 +133,7 @@ import simpmusic.composeapp.generated.resources.downloading
 import simpmusic.composeapp.generated.resources.no_description
 import simpmusic.composeapp.generated.resources.other_version
 import simpmusic.composeapp.generated.resources.year_and_category
+import com.maxrave.simpmusic.ui.theme.roundedShape
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -362,7 +363,7 @@ fun AlbumScreen(
                                                         .padding(12.dp)
                                                         .windowInsetsPadding(WindowInsets.statusBars)
                                                         .height(48.dp)
-                                                        .liquidGlass(artworkBackdrop, RoundedCornerShape(24.dp)),
+                                                        .liquidGlass(artworkBackdrop, roundedShape(24.dp)),
                                                 verticalAlignment = Alignment.CenterVertically,
                                             ) {
                                                 Box(
@@ -436,7 +437,7 @@ fun AlbumScreen(
                                                         modifier =
                                                             Modifier
                                                                 .size(280.dp)
-                                                                .clip(RoundedCornerShape(8.dp)),
+                                                                .clip(roundedShape(8.dp)),
                                                     )
                                                     Column(
                                                         modifier = Modifier.weight(1f),
@@ -621,7 +622,7 @@ fun AlbumScreen(
                                                 LiquidGlassIconButton(
                                                     backdrop = headerBackdrop,
                                                     imageVector = SimpIcons.ArrowBackIosNew,
-                                                    shape = RoundedCornerShape(24.dp),
+                                                    shape = roundedShape(24.dp),
                                                     // Same directional style as the like/⋯ pill, a touch thicker. The default
                                                     // width of 0.5.dp becomes a ~2px stroke (HighlightModifier: ceil(width.toPx()) * 2),
                                                     // which reads along the pill's long edge but vanishes around a 48dp circle. 1.dp
@@ -644,7 +645,7 @@ fun AlbumScreen(
                                                         .windowInsetsPadding(WindowInsets.statusBars)
                                                         .padding(end = 32.dp, top = 16.dp)
                                                         .height(48.dp)
-                                                        .liquidGlass(headerBackdrop, RoundedCornerShape(24.dp)),
+                                                        .liquidGlass(headerBackdrop, roundedShape(24.dp)),
                                                 verticalAlignment = Alignment.CenterVertically,
                                             ) {
                                                 Box(

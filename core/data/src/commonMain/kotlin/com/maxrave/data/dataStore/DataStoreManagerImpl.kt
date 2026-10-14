@@ -1426,7 +1426,7 @@ internal class DataStoreManagerImpl(
 
     override val crossfadeEnabled: Flow<String> =
         settingsDataStore.data.map { preferences ->
-            preferences[CROSSFADE_ENABLED] ?: FALSE
+            preferences[CROSSFADE_ENABLED] ?: TRUE // Reliefy: crossfade on by default
         }
 
     override suspend fun setCrossfadeEnabled(enabled: Boolean) {

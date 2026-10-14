@@ -222,6 +222,7 @@ import simpmusic.composeapp.generated.resources.warning
 import simpmusic.composeapp.generated.resources.welcome_back
 import simpmusic.composeapp.generated.resources.what_is_best_choice_today
 import simpmusic.composeapp.generated.resources.workout
+import com.maxrave.simpmusic.ui.theme.roundedShape
 
 // DataStore key for blog-promo one-shot dialog. Bump the suffix (v2, v3, …) to re-promote.
 private const val BLOG_PROMO_KEY = "blog_promo_v1_seen"
@@ -655,7 +656,7 @@ fun HomeScreen(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier =
                             Modifier
-                                .clip(RoundedCornerShape(8.dp))
+                                .clip(roundedShape(8.dp))
                                 .clickable {
                                     doNotShowAgain = !doNotShowAgain
                                 }.fillMaxWidth(),
@@ -1480,7 +1481,7 @@ fun ChartData(
                         onClick = { navController.navigate(PodcastDestination(podcastId = data.browseId)) },
                         data = data,
                         widthDp = if (isPortrait) gridWidthDp else minOf(gridWidthDp, LandscapeGridItemMaxWidth),
-                        thumbnailShape = RoundedCornerShape(8.dp),
+                        thumbnailShape = roundedShape(8.dp),
                         subtitle = data.subscribers,
                     )
                 }

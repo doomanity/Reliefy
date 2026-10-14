@@ -130,12 +130,13 @@ import simpmusic.composeapp.generated.resources.show
 import simpmusic.composeapp.generated.resources.spotify_lyrics_provider
 import simpmusic.composeapp.generated.resources.unsynced
 import simpmusic.composeapp.generated.resources.view_count
+import com.maxrave.simpmusic.ui.theme.roundedShape
 
 // Shared shape for the below-the-fold tonal cards.
-private val ExpressiveCardShape = RoundedCornerShape(20.dp)
+private val ExpressiveCardShape get() = roundedShape(20.dp)
 
 // Artwork card corner radius — the signature shape of the "Tonal pills" design.
-private val ArtworkCardShape = RoundedCornerShape(28.dp)
+private val ArtworkCardShape get() = roundedShape(28.dp)
 
 /**
  * Width / height of the slot the artwork card takes in the column: the video's own shape while
@@ -1049,7 +1050,7 @@ internal fun ExpressiveCollapsedToolbar(
                                 .height(1.dp)
                                 .background(
                                     color = Color.Transparent,
-                                    shape = RoundedCornerShape(4.dp),
+                                    shape = roundedShape(4.dp),
                                 ),
                         color = colorScheme.primary,
                         trackColor = colorScheme.surfaceContainerHighest,

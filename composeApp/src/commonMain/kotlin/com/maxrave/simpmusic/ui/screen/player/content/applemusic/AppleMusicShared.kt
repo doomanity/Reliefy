@@ -115,6 +115,7 @@ import simpmusic.composeapp.generated.resources.crossfading
 import simpmusic.composeapp.generated.resources.live_badge
 import kotlin.math.roundToLong
 import org.koin.compose.koinInject
+import com.maxrave.simpmusic.ui.theme.roundedShape
 
 /** Which body the dock is currently showing. Held by the top-level Apple Music composable. */
 internal enum class AppleMusicView { MAIN, LYRICS, QUEUE }
@@ -422,7 +423,7 @@ internal fun AppleMusicCompactHeader(
             placeholder = rememberHolderPainter(),
             error = rememberHolderPainter(),
             contentDescription = null,
-            modifier = Modifier.size(55.dp).clip(RoundedCornerShape(4.dp)),
+            modifier = Modifier.size(55.dp).clip(roundedShape(4.dp)),
         )
         Spacer(modifier = Modifier.width(12.dp))
         Column(modifier = Modifier.weight(1f)) {

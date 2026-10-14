@@ -27,6 +27,7 @@ import com.maxrave.simpmusic.ui.theme.typo
 import org.jetbrains.compose.resources.painterResource
 import simpmusic.composeapp.generated.resources.Res
 import simpmusic.composeapp.generated.resources.monochrome
+import com.maxrave.simpmusic.ui.theme.roundedShape
 
 /**
  * A "Moods & Genres" browse category tile: the [playlistTitleGradient] and SimpMusic badge of an
@@ -49,7 +50,7 @@ fun MoodCategoryCard(
             modifier
                 .fillMaxWidth()
                 .aspectRatio(2f)
-                .clip(RoundedCornerShape(10.dp))
+                .clip(roundedShape(10.dp))
                 .angledGradientBackground(
                     colors = playlistTitleGradient(title),
                     degrees = 45f,
@@ -90,7 +91,7 @@ fun MoodCategoryCard(
                         .offset(x = 8.dp, y = 12.dp)
                         .size(64.dp)
                         .rotate(25f)
-                        .clip(RoundedCornerShape(2.dp)),
+                        .clip(roundedShape(2.dp)),
             )
         }
         Text(
