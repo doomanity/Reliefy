@@ -24,6 +24,12 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 120
     steps:
+      - name: Free up disk space
+        # Before setup-java: the JDK it installs lives in the tool cache, which must stay.
+        run: |
+          sudo rm -rf /usr/share/dotnet /opt/ghc /usr/local/share/boost || true
+          df -h /
+
       - uses: actions/checkout@v5
 
       - name: Set up JDK 21
@@ -32,11 +38,6 @@ jobs:
           java-version: 21
           distribution: microsoft
           cache: gradle
-
-      - name: Free up disk space
-        run: |
-          sudo rm -rf /usr/share/dotnet /opt/ghc /usr/local/share/boost "$AGENT_TOOLSDIRECTORY" || true
-          df -h /
 
       - name: Read app version
         id: version
