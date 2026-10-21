@@ -21,6 +21,7 @@ import com.maxrave.data.repository.SongRepositoryImpl
 import com.maxrave.data.repository.StreamRepositoryImpl
 import com.maxrave.data.repository.TasteRepositoryImpl
 import com.maxrave.data.repository.UpdateRepositoryImpl
+import com.maxrave.data.repository.VideoRepositoryImpl
 import com.maxrave.domain.repository.AccountRepository
 import com.maxrave.domain.repository.AlbumRepository
 import com.maxrave.domain.repository.AnalyticsRepository
@@ -39,6 +40,7 @@ import com.maxrave.domain.repository.SongRepository
 import com.maxrave.domain.repository.StreamRepository
 import com.maxrave.domain.repository.TasteRepository
 import com.maxrave.domain.repository.UpdateRepository
+import com.maxrave.domain.repository.VideoRepository
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
@@ -124,5 +126,10 @@ val repositoryModule =
         // Lazy: only the taste card in Library asks for it.
         single<TasteRepository> {
             TasteRepositoryImpl(get(), get())
+        }
+
+        // Lazy: only the video mode asks for it.
+        single<VideoRepository> {
+            VideoRepositoryImpl(get())
         }
     }

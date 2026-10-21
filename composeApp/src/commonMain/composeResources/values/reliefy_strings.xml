@@ -63,4 +63,28 @@
     <string name="discord_rpc_name_message">This is the name Discord shows after \"Listening to\". Leave it empty to use Reliefy. It updates on the next song.</string>
     <string name="discord_rpc_name_too_long">Max 64 characters</string>
     <string name="discord_rpc_name_default">Reliefy</string>
+
+    <!-- Music / Video mode -->
+    <string name="mode_music">Music</string>
+    <string name="mode_video">Video</string>
+    <string name="mode_switch_description">Switch between Music and Video</string>
+    <string name="video_home_subtitle">Videos, no ads</string>
+    <string name="video_search_hint">Search videos</string>
+    <string name="video_filter_all">All</string>
+    <string name="video_filter_videos">Videos</string>
+    <string name="video_filter_channels">Channels</string>
+    <string name="video_filter_playlists">Playlists</string>
+    <string name="video_filter_live">Live</string>
+    <string name="video_shorts">Shorts</string>
+    <string name="video_badge_live">LIVE</string>
+    <string name="video_badge_upcoming">Upcoming</string>
+    <string name="video_error_title">Could not load videos</string>
+    <string name="video_error_message">Check your connection and try again.</string>
+    <string name="video_load_more_failed">Could not load more. Tap to try again.</string>
+    <string name="video_empty">Nothing here yet</string>
+    <string name="video_sign_in_hint">Sign in to YouTube in Settings to get a home feed made for you.</string>
+    <string name="video_tab_videos">Videos</string>
+    <string name="video_tab_shorts">Shorts</string>
+    <string name="video_tab_playlists">Playlists</string>
+    <string name="video_back">Back</string>
 </resources>

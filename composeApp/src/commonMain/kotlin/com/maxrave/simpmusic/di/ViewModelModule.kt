@@ -28,12 +28,22 @@ import com.maxrave.simpmusic.viewModel.SettingsViewModel
 import com.maxrave.simpmusic.viewModel.SharedViewModel
 import com.maxrave.simpmusic.viewModel.SongSelectionViewModel
 import com.maxrave.simpmusic.viewModel.TasteViewModel
+import com.maxrave.simpmusic.viewModel.VideoHomeViewModel
+import com.maxrave.simpmusic.viewModel.VideoListViewModel
+import com.maxrave.simpmusic.viewModel.VideoSearchViewModel
 import com.maxrave.simpmusic.viewModel.WrappedViewModel
+import com.maxrave.simpmusic.utils.AppModeController
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
 val viewModelModule =
     module {
+        // Which half of the app (Music or Video) is showing.
+        single { AppModeController(get()) }
+        // The video half's screens. They find what they need through Koin themselves.
+        viewModel { VideoHomeViewModel() }
+        viewModel { VideoSearchViewModel() }
+        viewModel { VideoListViewModel() }
         single {
             SharedViewModel(
                 get(),

@@ -106,6 +106,9 @@ import com.maxrave.simpmusic.ui.theme.desktopWindowLight
 import com.maxrave.simpmusic.ui.theme.fontFamily
 import com.maxrave.simpmusic.ui.theme.parseThemeColorHex
 import com.maxrave.simpmusic.ui.theme.typo
+import com.maxrave.simpmusic.ui.component.VideoBottomBar
+import com.maxrave.simpmusic.utils.AppMode
+import com.maxrave.simpmusic.utils.AppModeController
 import com.maxrave.simpmusic.utils.VersionManager
 import com.maxrave.simpmusic.utils.isAppLinkAvailable
 import com.maxrave.simpmusic.utils.libraryTabOf
@@ -487,6 +490,9 @@ fun App(
     var isScrolledToTop by rememberSaveable {
         mutableStateOf(false)
     }
+    val appModeController: AppModeController = koinInject()
+    val appMode by appModeController.mode.collectAsState()
+    val isVideoMode = appMode == AppMode.VIDEO
     val isTablet = windowSize.isWidthAtLeastBreakpoint(WIDTH_DP_MEDIUM_LOWER_BOUND)
     val isTabletLandscape = isTablet && currentOrientation() == Orientation.LANDSCAPE
 
@@ -531,12 +537,41 @@ fun App(
             containerColor =
                 if (isDesktopShell) desktopWindow else MaterialTheme.colorScheme.background,
             bottomBar = {
-                if (!isTablet) {
+                if (!isTablet || isVideoMode) {
                     AnimatedVisibility(
                         isNavBarVisible,
                         enter = fadeIn() + slideInHorizontally(),
                         exit = fadeOut(),
                     ) {
+                        if (isVideoMode) {
+                            // The video half has its own bar. The mini player sits above it.
+                            Column {
+                                AnimatedVisibility(
+                                    isShowMiniPlayer,
+                                    enter = fadeIn() + slideInHorizontally(),
+                                    exit = fadeOut(),
+                                ) {
+                                    MiniPlayer(
+                                        Modifier
+                                            .height(60.dp)
+                                            .fillMaxWidth()
+                                            .padding(horizontal = 16.dp)
+                                            .padding(bottom = 4.dp),
+                                        backdrop = backdrop,
+                                        navController = navController,
+                                        onClick = {
+                                            isShowNowPlaylistScreen = true
+                                        },
+                                        onClose = {
+                                            viewModel.stopPlayer()
+                                            viewModel.isServiceRunning = false
+                                        },
+                                    )
+                                }
+                                VideoBottomBar(navController)
+                            }
+                            return@AnimatedVisibility
+                        }
                         // On Android both materials go through the folding bar, which draws the mini
                         // player itself. Desktop keeps the always-open flat bar under its own one.
                         val useFoldingBar = getPlatform() == Platform.Android || isLiquidGlassEnabled == TRUE
@@ -609,7 +644,7 @@ fun App(
                     Row(
                         Modifier.fillMaxSize(),
                     ) {
-                        if (isTablet && !isInFullscreen) {
+                        if (isTablet && !isInFullscreen && !isVideoMode) {
                             AppNavigationRail(
                                 navController = navController,
                                 showAnalyticsTab = showAnalyticsTab,
@@ -684,7 +719,7 @@ fun App(
                                     Modifier
                                         .padding(innerPadding)
                                         .align(Alignment.BottomCenter),
-                                visible = isShowMiniPlayer && isTablet && !isInFullscreen,
+                                visible = isShowMiniPlayer && isTablet && !isInFullscreen && !isVideoMode,
                                 enter = fadeIn() + slideInHorizontally(),
                                 exit = fadeOut(),
                             ) {

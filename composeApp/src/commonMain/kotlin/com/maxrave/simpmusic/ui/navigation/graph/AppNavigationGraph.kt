@@ -4,9 +4,12 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.toRoute
 import com.maxrave.simpmusic.ui.navigation.destination.home.AnalyticsDestination
 import com.maxrave.simpmusic.ui.navigation.destination.home.HomeDestination
 import com.maxrave.simpmusic.ui.navigation.destination.home.WrappedDestination
@@ -27,6 +30,14 @@ import com.maxrave.simpmusic.ui.screen.library.LibraryScreen
 import com.maxrave.simpmusic.ui.screen.library.MixForYouScreen
 import com.maxrave.simpmusic.ui.screen.other.SearchScreen
 import com.maxrave.simpmusic.ui.screen.player.FullscreenPlayer
+import com.maxrave.simpmusic.ui.navigation.destination.video.VideoChannelDestination
+import com.maxrave.simpmusic.ui.navigation.destination.video.VideoPlaylistDestination
+import com.maxrave.simpmusic.ui.screen.video.VideoHomeScreen
+import com.maxrave.simpmusic.ui.screen.video.VideoListScreen
+import com.maxrave.simpmusic.ui.screen.video.VideoSearchScreen
+import com.maxrave.simpmusic.utils.AppMode
+import com.maxrave.simpmusic.utils.AppModeController
+import org.koin.compose.koinInject
 
 @Composable
 @ExperimentalMaterial3Api
@@ -42,6 +53,10 @@ fun AppNavigationGraph(
 ) {
     // Reliefy: screen transitions follow Customize > Animation feel.
     val motion = LocalReliefyStyle.current.motion
+    // Music or Video. The tabs are the same routes in both halves; this decides what they draw.
+    val appModeController: AppModeController = koinInject()
+    val appMode by appModeController.mode.collectAsState()
+    val isVideoMode = appMode == AppMode.VIDEO
     NavHost(
         navController,
         startDestination = startDestination,
@@ -52,14 +67,51 @@ fun AppNavigationGraph(
     ) {
         // Bottom bar destinations
         composable<HomeDestination> {
-            HomeScreen(
-                onScrolling = onScrolling,
-                navController = navController,
-            )
+            if (isVideoMode) {
+                VideoHomeScreen(
+                    navController = navController,
+                    innerPadding = innerPadding,
+                    onOpenPlayer = showNowPlayingSheet,
+                )
+            } else {
+                HomeScreen(
+                    onScrolling = onScrolling,
+                    navController = navController,
+                )
+            }
         }
         composable<SearchDestination> {
-            SearchScreen(
+            if (isVideoMode) {
+                VideoSearchScreen(
+                    navController = navController,
+                    innerPadding = innerPadding,
+                    onOpenPlayer = showNowPlayingSheet,
+                )
+            } else {
+                SearchScreen(
+                    navController = navController,
+                )
+            }
+        }
+        // Video half: a channel's videos, and a playlist's videos.
+        composable<VideoChannelDestination> { entry ->
+            val route = entry.toRoute<VideoChannelDestination>()
+            VideoListScreen(
                 navController = navController,
+                innerPadding = innerPadding,
+                onOpenPlayer = showNowPlayingSheet,
+                title = route.name,
+                channelId = route.channelId,
+            )
+        }
+        composable<VideoPlaylistDestination> { entry ->
+            val route = entry.toRoute<VideoPlaylistDestination>()
+            VideoListScreen(
+                navController = navController,
+                innerPadding = innerPadding,
+                onOpenPlayer = showNowPlayingSheet,
+                title = route.title,
+                playlistId = route.playlistId,
             )
         }
         composable<LibraryDestination> {

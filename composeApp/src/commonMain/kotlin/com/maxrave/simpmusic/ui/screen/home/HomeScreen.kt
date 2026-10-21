@@ -117,6 +117,7 @@ import com.maxrave.simpmusic.extension.isScrollingUp
 import com.maxrave.simpmusic.extension.rgbFactor
 import com.maxrave.simpmusic.extension.ultraThinBarStyle
 import com.maxrave.simpmusic.getPlatform
+import com.maxrave.simpmusic.ui.component.AppModeTitle
 import com.maxrave.simpmusic.ui.component.BlogPromoDialog
 import com.maxrave.simpmusic.ui.component.CenterLoadingBox
 import com.maxrave.simpmusic.ui.component.Chip
@@ -1067,35 +1068,27 @@ fun HomeTopAppBar(navController: NavController) {
                 TopAppBarDefaults.windowInsets.only(WindowInsetsSides.Start),
             ),
         title = {
-            Column {
-                Text(
-                    text = stringResource(Res.string.app_name),
-                    style = typo().titleMedium,
-                    color = MaterialTheme.colorScheme.onBackground,
-                    modifier = Modifier.padding(bottom = 4.dp),
-                )
-                Text(
-                    text =
-                        when (hour) {
-                            in 6..12 -> {
-                                stringResource(Res.string.good_morning)
-                            }
+            // The app name is also the Music / Video switch.
+            AppModeTitle(
+                subtitle =
+                    when (hour) {
+                        in 6..12 -> {
+                            stringResource(Res.string.good_morning)
+                        }
 
-                            in 13..17 -> {
-                                stringResource(Res.string.good_afternoon)
-                            }
+                        in 13..17 -> {
+                            stringResource(Res.string.good_afternoon)
+                        }
 
-                            in 18..23 -> {
-                                stringResource(Res.string.good_evening)
-                            }
+                        in 18..23 -> {
+                            stringResource(Res.string.good_evening)
+                        }
 
-                            else -> {
-                                stringResource(Res.string.good_night)
-                            }
-                        },
-                    style = typo().bodySmall,
-                )
-            }
+                        else -> {
+                            stringResource(Res.string.good_night)
+                        }
+                    },
+            )
         },
         actions = {
             RippleIconButton(imageVector = SimpIcons.Notifications, tint = MaterialTheme.colorScheme.onBackground) {

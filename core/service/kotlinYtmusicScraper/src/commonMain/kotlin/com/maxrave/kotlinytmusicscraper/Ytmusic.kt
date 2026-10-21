@@ -157,6 +157,18 @@ class Ytmusic {
             httpClient = createClient()
         }
 
+    /** Who is asking, for the video side's calls to www.youtube.com. Read fresh on every call. */
+    internal fun webSession() =
+        com.maxrave.kotlinytmusicscraper.video.WebSession(
+            cookie = cookie,
+            visitorData = visitorData,
+            authUser = authUser,
+            pageId = pageId,
+            hl = locale.hl,
+            gl = locale.gl,
+            proxy = proxy,
+        )
+
     private val extractor = Extractor()
 
     init {

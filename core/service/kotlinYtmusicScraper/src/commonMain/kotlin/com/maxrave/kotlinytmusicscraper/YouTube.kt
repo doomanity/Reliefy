@@ -141,6 +141,9 @@ private const val TAG = "YouTubeScraper"
 class YouTube {
     private val ytMusic = Ytmusic()
 
+    /** The YouTube-style video side (www.youtube.com): home, search, channels, playlists, related. */
+    val video = com.maxrave.kotlinytmusicscraper.video.YtWebApi { ytMusic.webSession() }
+
     private val tidalTokenMutex = Mutex()
     private var tidalAccessToken: String? = null
     private var tidalTokenExpiresAt: Long = 0L
