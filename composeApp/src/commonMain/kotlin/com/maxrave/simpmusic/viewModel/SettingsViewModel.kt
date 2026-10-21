@@ -193,6 +193,16 @@ class SettingsViewModel(
     private val _richPresenceEnabled = MutableStateFlow(false)
     val richPresenceEnabled: StateFlow<Boolean> = _richPresenceEnabled
 
+    // Reliefy: what Discord shows after "Listening to". Empty = the default name.
+    private val _discordRpcName = MutableStateFlow("")
+    val discordRpcName: StateFlow<String> = _discordRpcName
+
+    fun setDiscordRpcName(name: String) {
+        viewModelScope.launch {
+            dataStoreManager.putString(DataStoreManager.DISCORD_RPC_NAME_KEY, name.trim().take(64))
+        }
+    }
+
     /**
      * False in a FOSS build, and in a full build with no API key in `local.properties`. The whole
      * Last.fm block in settings is hidden when it is false, rather than offering a login that
@@ -258,6 +268,11 @@ class SettingsViewModel(
     val killServiceOnExit: StateFlow<String?> = _killServiceOnExit
 
     init {
+        viewModelScope.launch {
+            dataStoreManager.getString(DataStoreManager.DISCORD_RPC_NAME_KEY).collect {
+                _discordRpcName.value = it.orEmpty()
+            }
+        }
         getYoutubeSubtitleLanguage()
         getPreferredAudioLanguage()
         getHelpBuildLyricsDatabase()

@@ -15,6 +15,8 @@ class DiscordRPC(
         durationMillis: Long,
         playbackSpeed: Float = 1.0f,
         song: SongEntity,
+        // Reliefy: the user can rename what Discord shows after "Listening to". Blank = default.
+        appName: String = APP_NAME,
     ) = runCatching {
         val currentTime = Clock.System.now().toEpochMilliseconds()
 
@@ -25,7 +27,7 @@ class DiscordRPC(
         val adjustedRemainingDuration = (remainingDuration / playbackSpeed).toLong()
 
         setActivity(
-            name = APP_NAME,
+            name = appName.trim().take(MAX_NAME_LENGTH).ifBlank { APP_NAME },
             details = song.title,
             state = song.artistName?.joinToString(", "),
             largeImage = song.thumbnails?.let { RpcImage.ExternalImage(it) },
@@ -34,8 +36,8 @@ class DiscordRPC(
             smallText = song.artistName?.firstOrNull(),
             buttons =
                 listOf(
-                    "Listen on SimpMusic" to "https://simpmusic.org/app/watch?v=${song.videoId}",
-                    "Visit SimpMusic" to "https://github.com/maxrave-dev/SimpMusic",
+                    "Listen on YouTube Music" to "https://music.youtube.com/watch?v=${song.videoId}",
+                    "Get Reliefy" to "https://github.com/doomanity/Reliefy",
                 ),
             type = Type.LISTENING,
             since = currentTime,
@@ -47,7 +49,8 @@ class DiscordRPC(
 
     companion object {
         private const val APPLICATION_ID = "1271273225120125040"
-        private const val APP_NAME: String = "SimpMusic"
+        private const val APP_NAME: String = "Reliefy"
+        private const val MAX_NAME_LENGTH = 64
         private const val APP_ICON: String =
             "https://fra.cloud.appwrite.io/v1/storage/buckets/683f1f620010ba0fa5b1/files/69007bc8001a28a7cea8/view?project=67ec0369002bd8a96885"
     }

@@ -614,6 +614,10 @@ interface DataStoreManager {
     }
 
     companion object Values {
+        /** Reliefy: the name Discord shows after "Listening to". Blank means [DEFAULT_DISCORD_RPC_NAME]. */
+        const val DISCORD_RPC_NAME_KEY = "reliefy_rpc_name"
+        const val DEFAULT_DISCORD_RPC_NAME = "Reliefy"
+
         const val SIMPMUSIC = "simpmusic"
         const val YOUTUBE = "youtube"
         const val LRCLIB = "lrclib"

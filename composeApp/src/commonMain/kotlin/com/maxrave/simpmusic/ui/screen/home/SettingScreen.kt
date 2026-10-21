@@ -329,6 +329,11 @@ import simpmusic.composeapp.generated.resources.login_sync_section
 import simpmusic.composeapp.generated.resources.lrclib
 import simpmusic.composeapp.generated.resources.lyrics
 import simpmusic.composeapp.generated.resources.lyrics_style
+import simpmusic.composeapp.generated.resources.discord_rpc_name
+import simpmusic.composeapp.generated.resources.discord_rpc_name_default
+import simpmusic.composeapp.generated.resources.discord_rpc_name_message
+import simpmusic.composeapp.generated.resources.discord_rpc_name_too_long
+import simpmusic.composeapp.generated.resources.discord_rpc_name_value
 import simpmusic.composeapp.generated.resources.lyrics_offset
 import simpmusic.composeapp.generated.resources.lyrics_offset_invalid
 import simpmusic.composeapp.generated.resources.lyrics_offset_message
@@ -593,6 +598,7 @@ fun SettingScreen(
     val lastfmUsername by viewModel.lastfmUsername.collectAsStateWithLifecycle()
     val lastfmScrobbleEnabled by viewModel.lastfmScrobbleEnabled.collectAsStateWithLifecycle()
     val richPresenceEnabled by viewModel.richPresenceEnabled.collectAsStateWithLifecycle()
+    val discordRpcName by viewModel.discordRpcName.collectAsStateWithLifecycle()
 
     val crossfadeEnabled by viewModel.crossfadeEnabled.collectAsStateWithLifecycle()
     val crossfadeDuration by viewModel.crossfadeDuration.collectAsStateWithLifecycle()
@@ -2093,6 +2099,39 @@ fun SettingScreen(
                     title = stringResource(Res.string.enable_rich_presence),
                     subtitle = stringResource(Res.string.rich_presence_info),
                     switch = (richPresenceEnabled to { viewModel.setDiscordRichPresenceEnabled(it) }),
+                    isEnable = discordLoggedIn,
+                )
+                // Reliefy: rename what Discord shows after "Listening to".
+                SettingItem(
+                    title = stringResource(Res.string.discord_rpc_name),
+                    subtitle =
+                        stringResource(
+                            Res.string.discord_rpc_name_value,
+                            discordRpcName.ifBlank { stringResource(Res.string.discord_rpc_name_default) },
+                        ),
+                    onClick = {
+                        viewModel.setAlertData(
+                            SettingAlertState(
+                                title = runBlocking { getString(Res.string.discord_rpc_name) },
+                                // The text field only renders inside the `message != null` branch.
+                                message = runBlocking { getString(Res.string.discord_rpc_name_message) },
+                                textField =
+                                    SettingAlertState.TextFieldData(
+                                        label = runBlocking { getString(Res.string.discord_rpc_name) },
+                                        value = discordRpcName,
+                                        verifyCodeBlock = {
+                                            (it.trim().length <= 64) to
+                                                runBlocking { getString(Res.string.discord_rpc_name_too_long) }
+                                        },
+                                    ),
+                                confirm =
+                                    runBlocking { getString(Res.string.change) } to { state ->
+                                        viewModel.setDiscordRpcName(state.textField?.value.orEmpty())
+                                    },
+                                dismiss = runBlocking { getString(Res.string.cancel) },
+                            ),
+                        )
+                    },
                     isEnable = discordLoggedIn,
                 )
             }

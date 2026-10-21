@@ -56,4 +56,11 @@
     <string name="customize_transitions">Song transitions</string>
     <string name="customize_crossfade_hint">Songs fade into each other instead of stopping and starting. Auto picks a length for each song, DJ style.</string>
     <string name="customize_reset">Reset to default</string>
+
+    <!-- Discord rich presence name -->
+    <string name="discord_rpc_name">Rich presence name</string>
+    <string name="discord_rpc_name_value">Shows as: Listening to %1$s</string>
+    <string name="discord_rpc_name_message">This is the name Discord shows after \"Listening to\". Leave it empty to use Reliefy. It updates on the next song.</string>
+    <string name="discord_rpc_name_too_long">Max 64 characters</string>
+    <string name="discord_rpc_name_default">Reliefy</string>
 </resources>

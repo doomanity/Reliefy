@@ -579,8 +579,15 @@ internal class MediaServiceHandlerImpl(
                                             // already closed the RPC (Fix 1). controlState.value is a
                                             // safe field read from Dispatchers.IO, unlike player.isPlaying.
                                             if (!controlState.value.isPlaying) return@collectLatest
+                                            // Reliefy: user-chosen name after "Listening to" (read per update,
+                                            // never per progress tick).
+                                            val rpcName =
+                                                dataStoreManager
+                                                    .getString(DataStoreManager.DISCORD_RPC_NAME_KEY)
+                                                    .first()
+                                                    .orEmpty()
                                             discordRPC
-                                                ?.updateSong(snap.progressMs, snap.durationMs, snap.speed, snap.song)
+                                                ?.updateSong(snap.progressMs, snap.durationMs, snap.speed, snap.song, rpcName)
                                                 ?.onFailure { if (it !is CancellationException) Logger.e(TAG, "Discord RPC update failed: ${it.message}") }
                                         }
                                     }
