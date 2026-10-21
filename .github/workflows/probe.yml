@@ -4,6 +4,11 @@ name: Probe YouTube responses
 # video side can be written against what YouTube really sends. Nothing here is signed in.
 on:
   workflow_dispatch:
+  push:
+    branches: [ video ]
+    paths:
+      - '.github/probe/**'
+      - '.github/workflows/probe.yml'
 
 permissions:
   contents: write
