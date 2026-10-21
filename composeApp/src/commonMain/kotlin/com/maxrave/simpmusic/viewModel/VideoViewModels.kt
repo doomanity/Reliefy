@@ -7,6 +7,7 @@ import com.maxrave.domain.data.model.video.VideoItem
 import com.maxrave.domain.data.model.video.VideoPage
 import com.maxrave.domain.data.model.video.VideoSearchFilter
 import com.maxrave.domain.manager.DataStoreManager
+import com.maxrave.domain.mediaservice.video.VideoComment
 import com.maxrave.domain.mediaservice.video.VideoPlayback
 import com.maxrave.domain.repository.VideoRepository
 import com.maxrave.simpmusic.ui.screen.video.VideoWatchUi
@@ -254,7 +255,7 @@ class VideoListViewModel : VideoViewModel() {
     }
 }
 
-/** The watch page: the player's state plus the "From <channel>" list. */
+/** The watch page: the player's state, the "up next" list, the "From <channel>" list and comments. */
 class VideoWatchViewModel : BaseViewModel() {
     val playback: VideoPlayback by inject<VideoPlayback>()
     private val videoRepository: VideoRepository by inject<VideoRepository>()
@@ -262,7 +263,17 @@ class VideoWatchViewModel : BaseViewModel() {
     private val _channelVideos = MutableStateFlow<List<VideoItem>>(emptyList())
     val channelVideos: StateFlow<List<VideoItem>> = _channelVideos.asStateFlow()
 
+    /** "Up next", read with the same reader as the home feed (YouTube's own watch page data). */
+    private val _related = MutableStateFlow<List<VideoItem>>(emptyList())
+    val related: StateFlow<List<VideoItem>> = _related.asStateFlow()
+
+    private val _comments = MutableStateFlow(CommentsState())
+    val comments: StateFlow<CommentsState> = _comments.asStateFlow()
+
     private var channelLoadedFor: String? = null
+    private var relatedLoadedFor: String? = null
+    private var commentsLoadedFor: String? = null
+    private var commentsJob: Job? = null
 
     fun loadChannelVideos(channelId: String) {
         if (channelLoadedFor == channelId) return
@@ -277,6 +288,70 @@ class VideoWatchViewModel : BaseViewModel() {
         }
     }
 
+    /** Loads "up next" and the first comments for [videoId], once per video. */
+    fun onVideo(videoId: String) {
+        if (relatedLoadedFor != videoId) {
+            relatedLoadedFor = videoId
+            _related.value = emptyList()
+            viewModelScope.launch {
+                videoRepository.related(videoId).onSuccess { page ->
+                    if (relatedLoadedFor == videoId) {
+                        val videos = page.items.mapNotNull { (it as? VideoFeedItem.Video)?.video }
+                        _related.value = videos
+                        playback.offerUpNext(videoId, videos)
+                    }
+                }
+            }
+        }
+        if (commentsLoadedFor != videoId) {
+            commentsLoadedFor = videoId
+            commentsJob?.cancel()
+            _comments.value = CommentsState(loading = true)
+            commentsJob =
+                viewModelScope.launch {
+                    playback.comments(videoId).fold(
+                        onSuccess = { page ->
+                            if (commentsLoadedFor == videoId) {
+                                _comments.value =
+                                    CommentsState(
+                                        items = page.comments,
+                                        nextPage = page.nextPage,
+                                        total = page.totalCount,
+                                        disabled = page.disabled,
+                                    )
+                            }
+                        },
+                        onFailure = { if (commentsLoadedFor == videoId) _comments.value = CommentsState(failed = true) },
+                    )
+                }
+        }
+    }
+
+    fun loadMoreComments() {
+        val videoId = commentsLoadedFor ?: return
+        val current = _comments.value
+        val next = current.nextPage ?: return
+        if (current.loading) return
+        _comments.update { it.copy(loading = true) }
+        commentsJob =
+            viewModelScope.launch {
+                playback.comments(videoId, next).fold(
+                    onSuccess = { page ->
+                        if (commentsLoadedFor == videoId) {
+                            _comments.update {
+                                it.copy(
+                                    items = (it.items + page.comments).distinctBy { c -> c.id },
+                                    nextPage = page.nextPage,
+                                    loading = false,
+                                )
+                            }
+                        }
+                    },
+                    onFailure = { _comments.update { it.copy(loading = false) } },
+                )
+            }
+    }
+
     /** Plays [video] from [list], queueing the rest of the list after it. */
     fun playFrom(
         video: VideoItem,
@@ -287,3 +362,12 @@ class VideoWatchViewModel : BaseViewModel() {
         playback.play(video, rest.filter { !it.isShort && !it.isUpcoming })
     }
 }
+
+data class CommentsState(
+    val items: List<VideoComment> = emptyList(),
+    val nextPage: String? = null,
+    val total: Long = -1,
+    val loading: Boolean = false,
+    val failed: Boolean = false,
+    val disabled: Boolean = false,
+)

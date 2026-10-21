@@ -25,6 +25,7 @@ import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
 import com.doomanity.cooley.video.sabr.SabrMediaSource
 import com.doomanity.cooley.video.sabr.manifest.SabrManifest
+import com.doomanity.cooley.video.stream.CommentsFetcher
 import com.doomanity.cooley.video.stream.DashHelper
 import com.doomanity.cooley.video.stream.LoadedVideo
 import com.doomanity.cooley.video.stream.StreamFetcher
@@ -33,6 +34,7 @@ import com.doomanity.cooley.video.stream.VideoExtras
 import com.google.common.util.concurrent.ListenableFuture
 import com.maxrave.domain.data.model.video.VideoItem
 import com.maxrave.domain.mediaservice.video.SkipSegment
+import com.maxrave.domain.mediaservice.video.VideoCommentsPage
 import com.maxrave.domain.mediaservice.video.VideoLoadStatus
 import com.maxrave.domain.mediaservice.video.VideoPlayback
 import com.maxrave.domain.mediaservice.video.VideoPlaybackState
@@ -342,6 +344,32 @@ class VideoEngine(
         controllerFuture = null
     }
 
+    private var upNext: Pair<String, List<VideoItem>>? = null
+
+    override fun offerUpNext(
+        videoId: String,
+        videos: List<VideoItem>,
+    ) {
+        upNext = videoId to videos
+        _state.update { s ->
+            val d = s.details
+            if (d != null && d.videoId == videoId && d.related.isEmpty()) s.copy(details = d.copy(related = videos)) else s
+        }
+    }
+
+    override suspend fun comments(
+        videoId: String,
+        page: String?,
+    ): Result<VideoCommentsPage> =
+        try {
+            Result.success(CommentsFetcher.load(videoId, page))
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Throwable) {
+            Logger.w(TAG, "comments for $videoId failed: ${e.message}")
+            Result.failure(e)
+        }
+
     // endregion
 
     private fun load(
@@ -397,9 +425,12 @@ class VideoEngine(
                         return@launch
                     }
                 loaded = result
+                val offered = upNext?.takeIf { it.first == video.videoId }?.second.orEmpty()
+                val details =
+                    if (result.details.related.isEmpty() && offered.isNotEmpty()) result.details.copy(related = offered) else result.details
                 _state.update {
                     it.copy(
-                        details = result.details,
+                        details = details,
                         durationMs = result.details.durationSeconds * 1000,
                     )
                 }

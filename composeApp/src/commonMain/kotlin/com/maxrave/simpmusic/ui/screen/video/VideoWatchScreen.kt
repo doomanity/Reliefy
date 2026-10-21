@@ -8,6 +8,17 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.gestures.detectVerticalDragGestures
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.ui.graphics.TransformOrigin
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.onSizeChanged
+import kotlinx.coroutines.launch
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -66,6 +77,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.maxrave.domain.data.model.video.VideoItem
 import com.maxrave.domain.mediaservice.video.SkipSegment
+import com.maxrave.domain.mediaservice.video.VideoComment
+import com.maxrave.simpmusic.viewModel.CommentsState
 import com.maxrave.domain.mediaservice.video.VideoLoadStatus
 import com.maxrave.domain.mediaservice.video.VideoPlayback
 import com.maxrave.domain.mediaservice.video.VideoPlaybackState
@@ -109,8 +122,12 @@ import simpmusic.composeapp.generated.resources.video_chip_all
 import simpmusic.composeapp.generated.resources.video_chip_from
 import simpmusic.composeapp.generated.resources.video_chip_related
 import simpmusic.composeapp.generated.resources.video_more
+import simpmusic.composeapp.generated.resources.video_comments
+import simpmusic.composeapp.generated.resources.video_comments_failed
+import simpmusic.composeapp.generated.resources.video_comment_pinned
+import simpmusic.composeapp.generated.resources.video_comment_replies
 import simpmusic.composeapp.generated.resources.video_play_error
-import simpmusic.composeapp.generated.resources.video_quality
+import simpmusic.composeapp.generated.resources.cooley_video_quality
 import simpmusic.composeapp.generated.resources.video_quality_auto
 import simpmusic.composeapp.generated.resources.video_quality_auto_playing
 import simpmusic.composeapp.generated.resources.video_segment_interaction
@@ -171,15 +188,60 @@ fun VideoWatchScreen(
                 playback = playback,
                 fullscreen = true,
                 modifier = Modifier.fillMaxSize(),
+                // Swiping down in fullscreen leaves fullscreen, like YouTube.
+                gestureModifier =
+                    Modifier.pointerInput(Unit) {
+                        var total = 0f
+                        detectVerticalDragGestures(
+                            onDragStart = { total = 0f },
+                            onDragEnd = { if (total > 80.dp.toPx()) VideoWatchUi.setFullscreen(false) },
+                        ) { change, dy ->
+                            change.consume()
+                            total += dy
+                        }
+                    },
             )
         }
         return
     }
 
+    // Swipe the video down to shrink the page into the floating mini player, like YouTube.
+    val scope = rememberCoroutineScope()
+    val drag = remember { Animatable(0f) }
+    var pageHeight by remember { mutableFloatStateOf(1f) }
+    val dragProgress = (drag.value / pageHeight).coerceIn(0f, 1f)
+    val dragToMinimize =
+        Modifier.pointerInput(Unit) {
+            detectVerticalDragGestures(
+                onDragEnd = {
+                    scope.launch {
+                        if (drag.value > pageHeight * 0.18f) {
+                            drag.animateTo(pageHeight * 0.6f, tween(160))
+                            VideoWatchUi.minimize()
+                        } else {
+                            drag.animateTo(0f, spring())
+                        }
+                    }
+                },
+                onDragCancel = { scope.launch { drag.animateTo(0f, spring()) } },
+            ) { change, dy ->
+                change.consume()
+                scope.launch { drag.snapTo((drag.value + dy).coerceAtLeast(0f)) }
+            }
+        }
+
     Column(
         Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
+            .onSizeChanged { pageHeight = it.height.toFloat().coerceAtLeast(1f) }
+            .graphicsLayer {
+                translationY = drag.value
+                val scale = 1f - dragProgress * 0.45f
+                scaleX = scale
+                scaleY = scale
+                transformOrigin = TransformOrigin(1f, 0f)
+                alpha = 1f - dragProgress * 0.6f
+            }.background(MaterialTheme.colorScheme.background)
             // a tap that misses everything must not fall through to the page underneath
             .pointerInput(Unit) { detectTapGestures { } },
     ) {
@@ -197,6 +259,7 @@ fun VideoWatchScreen(
                 Modifier
                     .fillMaxWidth()
                     .aspectRatio(state.videoAspectRatio.coerceIn(1f, 16f / 9f)),
+            gestureModifier = dragToMinimize,
         )
         WatchDetails(
             state = state,
@@ -218,7 +281,9 @@ private fun VideoPlayerBox(
     playback: VideoPlayback,
     fullscreen: Boolean,
     modifier: Modifier = Modifier,
+    gestureModifier: Modifier = Modifier,
 ) {
+    val currentState by rememberUpdatedState(state)
     val position by playback.positionMs.collectAsState()
     val buffered by playback.bufferedMs.collectAsState()
     var controlsVisible by remember { mutableStateOf(true) }
@@ -258,6 +323,7 @@ private fun VideoPlayerBox(
         Box(
             Modifier
                 .fillMaxSize()
+                .then(gestureModifier)
                 .pointerInput(playback) {
                     detectTapGestures(
                         onTap = {
@@ -267,7 +333,7 @@ private fun VideoPlayerBox(
                         onDoubleTap = { offset ->
                             val forward = offset.x > size.width / 2
                             val target = playback.positionMs.value + if (forward) 10_000 else -10_000
-                            playback.seekTo(target.coerceIn(0, state.durationMs.takeIf { it > 0 } ?: Long.MAX_VALUE))
+                            playback.seekTo(target.coerceIn(0, currentState.durationMs.takeIf { it > 0 } ?: Long.MAX_VALUE))
                             seekHint = if (forward) "+10s" else "-10s"
                             interactions++
                         },
@@ -609,7 +675,7 @@ private fun VideoSettingsSheet(
                 }
                 else -> {
                     SettingsRow(
-                        title = stringResource(Res.string.video_quality),
+                        title = stringResource(Res.string.cooley_video_quality),
                         value =
                             state.selectedQuality?.let { "${it}p" }
                                 ?: state.playingQuality?.let { stringResource(Res.string.video_quality_auto_playing, it.toString()) }
@@ -701,11 +767,18 @@ private fun WatchDetails(
     val channelId = details?.channelId ?: current?.channelId
     val channelName = details?.channelName ?: current?.channelName
 
+    val fetchedRelated by viewModel.related.collectAsState()
+    val comments by viewModel.comments.collectAsState()
+    var showComments by remember(current?.videoId) { mutableStateOf(false) }
+
     LaunchedEffect(chip, channelId) {
         if (chip == 1 && channelId != null) viewModel.loadChannelVideos(channelId)
     }
+    LaunchedEffect(current?.videoId) {
+        current?.videoId?.let { viewModel.onVideo(it) }
+    }
 
-    val related = details?.related.orEmpty()
+    val related = fetchedRelated.ifEmpty { details?.related.orEmpty() }.filter { it.videoId != current?.videoId }
     val list: List<VideoItem> =
         when (chip) {
             1 -> channelVideos.filter { it.videoId != current?.videoId }
@@ -851,6 +924,10 @@ private fun WatchDetails(
             }
         }
 
+        item(key = "comments") {
+            CommentsTeaser(comments = comments, onOpen = { showComments = true })
+        }
+
         item(key = "chips") {
             LazyRow(
                 contentPadding = PaddingValues(horizontal = 12.dp),
@@ -890,6 +967,141 @@ private fun WatchDetails(
         }
 
         item(key = "navbar") { Spacer(Modifier.windowInsetsBottomHeight(WindowInsets.navigationBars)) }
+    }
+
+    if (showComments) {
+        CommentsSheet(
+            comments = comments,
+            onLoadMore = viewModel::loadMoreComments,
+            onDismiss = { showComments = false },
+        )
+    }
+}
+
+@Composable
+private fun CommentsTeaser(
+    comments: CommentsState,
+    onOpen: () -> Unit,
+) {
+    if (comments.disabled) return
+    val first = comments.items.firstOrNull()
+    Column(
+        Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 12.dp, vertical = 6.dp)
+            .clip(RoundedCornerShape(12.dp))
+            .background(MaterialTheme.colorScheme.surfaceContainer)
+            .clickable(enabled = comments.items.isNotEmpty(), onClick = onOpen)
+            .padding(12.dp),
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(stringResource(Res.string.video_comments), style = typo().titleSmall.copy(fontWeight = FontWeight.SemiBold))
+            if (comments.total > 0) {
+                Text(
+                    formatCount(comments.total),
+                    style = typo().bodySmall,
+                    modifier = Modifier.padding(start = 6.dp),
+                )
+            }
+        }
+        when {
+            first != null ->
+                Row(Modifier.padding(top = 8.dp), verticalAlignment = Alignment.CenterVertically) {
+                    RemoteImage(first.authorAvatarUrl, Modifier.size(24.dp).clip(CircleShape))
+                    Text(
+                        first.text,
+                        style = typo().bodySmall,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.padding(start = 8.dp),
+                    )
+                }
+            comments.loading ->
+                CircularProgressIndicator(Modifier.padding(top = 8.dp).size(18.dp), strokeWidth = 2.dp)
+            comments.failed ->
+                Text(stringResource(Res.string.video_comments_failed), style = typo().bodySmall, modifier = Modifier.padding(top = 6.dp))
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun CommentsSheet(
+    comments: CommentsState,
+    onLoadMore: () -> Unit,
+    onDismiss: () -> Unit,
+) {
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    ModalBottomSheet(onDismissRequest = onDismiss, sheetState = sheetState) {
+        Row(Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 4.dp), verticalAlignment = Alignment.CenterVertically) {
+            Text(stringResource(Res.string.video_comments), style = typo().titleMedium.copy(fontWeight = FontWeight.SemiBold))
+            if (comments.total > 0) {
+                Text(formatCount(comments.total), style = typo().bodyMedium, modifier = Modifier.padding(start = 8.dp))
+            }
+        }
+        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f), modifier = Modifier.padding(top = 8.dp))
+        LazyColumn(Modifier.fillMaxWidth(), contentPadding = PaddingValues(bottom = 24.dp)) {
+            items(comments.items, key = { it.id }) { comment ->
+                CommentRow(comment)
+            }
+            if (comments.nextPage != null) {
+                item(key = "more") {
+                    LaunchedEffect(comments.items.size) { onLoadMore() }
+                    Box(Modifier.fillMaxWidth().padding(16.dp), contentAlignment = Alignment.Center) {
+                        CircularProgressIndicator(Modifier.size(24.dp), strokeWidth = 2.dp)
+                    }
+                }
+            }
+            item(key = "navbar") { Spacer(Modifier.windowInsetsBottomHeight(WindowInsets.navigationBars)) }
+        }
+    }
+}
+
+@Composable
+private fun CommentRow(comment: VideoComment) {
+    var expanded by remember(comment.id) { mutableStateOf(false) }
+    Row(
+        Modifier
+            .fillMaxWidth()
+            .clickable { expanded = !expanded }
+            .padding(horizontal = 16.dp, vertical = 10.dp),
+    ) {
+        RemoteImage(comment.authorAvatarUrl, Modifier.size(32.dp).clip(CircleShape))
+        Column(Modifier.weight(1f).padding(start = 10.dp)) {
+            if (comment.isPinned) {
+                Text(stringResource(Res.string.video_comment_pinned), style = typo().labelSmall)
+            }
+            val header = listOfNotNull(comment.author, comment.publishedText).joinToString(" · ")
+            Text(
+                header,
+                style = typo().bodySmall.copy(fontWeight = if (comment.isByUploader) FontWeight.Bold else FontWeight.Normal),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+            Text(
+                comment.text,
+                style = typo().bodyMedium,
+                maxLines = if (expanded) Int.MAX_VALUE else 4,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.padding(top = 2.dp),
+            )
+            Row(Modifier.padding(top = 6.dp), verticalAlignment = Alignment.CenterVertically) {
+                Icon(SimpIcons.ThumbUp, null, modifier = Modifier.size(14.dp))
+                if (comment.likeCount > 0) {
+                    Text(formatCount(comment.likeCount), style = typo().labelSmall, modifier = Modifier.padding(start = 4.dp))
+                }
+                if (comment.isHeartedByUploader) {
+                    Text("  ❤", style = typo().labelSmall, color = Color(0xFFFF4E45))
+                }
+                if (comment.replyCount > 0) {
+                    Text(
+                        stringResource(Res.string.video_comment_replies, comment.replyCount.toString()),
+                        style = typo().labelSmall.copy(fontWeight = FontWeight.SemiBold),
+                        modifier = Modifier.padding(start = 14.dp),
+                    )
+                }
+            }
+        }
     }
 }
 

@@ -96,7 +96,7 @@
     <string name="video_chip_all">All</string>
     <string name="video_chip_from">From %1$s</string>
     <string name="video_chip_related">Related</string>
-    <string name="video_quality">Quality</string>
+    <string name="cooley_video_quality">Quality</string>
     <string name="video_quality_auto">Auto</string>
     <string name="video_quality_auto_playing">Auto (%1$sp)</string>
     <string name="video_speed">Playback speed</string>
@@ -117,4 +117,8 @@
     <string name="video_loading">Loading</string>
     <string name="video_streaming_via">Streaming over %1$s</string>
     <string name="video_up_next">Up next</string>
+    <string name="video_comments">Comments</string>
+    <string name="video_comments_failed">Could not load comments</string>
+    <string name="video_comment_pinned">Pinned</string>
+    <string name="video_comment_replies">%1$s replies</string>
 </resources>

@@ -46,6 +46,9 @@ jobs:
           echo "name=$name" >> "$GITHUB_OUTPUT"
           echo "Cooley version: $name"
 
+      - name: Check for duplicate string ids
+        run: python3 .github/scripts/check-duplicate-strings.py
+
       - name: Generate library licences list
         env:
           GITHUB_TOKEN: ${{ github.token }}

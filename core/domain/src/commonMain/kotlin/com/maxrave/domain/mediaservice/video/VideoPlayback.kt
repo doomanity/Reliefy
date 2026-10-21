@@ -47,6 +47,30 @@ data class VideoDetails(
     val chapters: List<VideoChapter> = emptyList(),
 )
 
+/** One comment under a video. */
+data class VideoComment(
+    val id: String,
+    val author: String,
+    val authorAvatarUrl: String? = null,
+    val text: String,
+    /** "2 weeks ago", already localized by YouTube. */
+    val publishedText: String? = null,
+    val likeCount: Long = 0,
+    val replyCount: Int = 0,
+    val isPinned: Boolean = false,
+    val isHeartedByUploader: Boolean = false,
+    val isByUploader: Boolean = false,
+)
+
+/** A page of comments. Pass [nextPage] back to load the next one; null at the end. */
+data class VideoCommentsPage(
+    val comments: List<VideoComment>,
+    val nextPage: String? = null,
+    /** Total count shown on YouTube, or -1 when unknown. */
+    val totalCount: Long = -1,
+    val disabled: Boolean = false,
+)
+
 enum class VideoLoadStatus { IDLE, LOADING, READY, ERROR }
 
 data class VideoPlaybackState(
@@ -125,6 +149,18 @@ interface VideoPlayback {
 
     /** Stops playback and forgets the video (closes the mini player). */
     fun stop()
+
+    /** "Up next" for [videoId] read elsewhere; autoplay picks from it when the video ends. */
+    fun offerUpNext(
+        videoId: String,
+        videos: List<VideoItem>,
+    ) {}
+
+    /** Comments of [videoId]. [page] is null for the first page, then a page's [VideoCommentsPage.nextPage]. */
+    suspend fun comments(
+        videoId: String,
+        page: String? = null,
+    ): Result<VideoCommentsPage>
 }
 
 /** Used where there is no video player. Every call does nothing. */
@@ -173,4 +209,9 @@ object UnsupportedVideoPlayback : VideoPlayback {
     override fun stop() {
         _state.value = VideoPlaybackState()
     }
+
+    override suspend fun comments(
+        videoId: String,
+        page: String?,
+    ): Result<VideoCommentsPage> = Result.success(VideoCommentsPage(emptyList(), disabled = true))
 }

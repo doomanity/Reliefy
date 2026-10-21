@@ -43,6 +43,8 @@ object StreamFetcher {
     @Volatile
     private var ready = false
 
+    fun ensureReady() = ensureNewPipe()
+
     private fun ensureNewPipe() {
         if (ready) return
         synchronized(this) {
@@ -94,7 +96,9 @@ object StreamFetcher {
                     subscriberCount = info.uploaderSubscriberCount,
                     viewCount = info.viewCount,
                     likeCount = info.likeCount,
-                    uploadedText = info.textualUploadDate,
+                    uploadedText =
+                        info.uploadDate?.let { runCatching { relativeTime(it.offsetDateTime()) }.getOrNull() }
+                            ?: info.textualUploadDate,
                     durationSeconds = info.duration,
                     isLive = isLive,
                     isShort =
@@ -145,7 +149,7 @@ private fun InfoItem.toVideoItem(): VideoItem? {
         thumbnailUrl = thumbnails.best(),
         durationText = if (live || duration <= 0) null else formatDuration(duration),
         viewsText = viewCount.takeIf { it >= 0 }?.let { "${compactCount(it)} views" },
-        publishedText = textualUploadDate,
+        publishedText = uploadDate?.let { runCatching { relativeTime(it.offsetDateTime()) }.getOrNull() } ?: textualUploadDate,
         isLive = live,
         isShort = isShortFormContent,
     )

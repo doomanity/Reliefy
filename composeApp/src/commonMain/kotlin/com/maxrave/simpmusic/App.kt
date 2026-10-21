@@ -561,22 +561,9 @@ fun App(
                         exit = fadeOut(),
                     ) {
                         if (isVideoMode) {
-                            // The video half has its own bar. A mini player sits above it: the
-                            // video's when one is loaded, otherwise the music's.
+                            // The video half has its own bar. The music mini player sits above
+                            // it; a video floats in the corner instead (see below).
                             Column {
-                                AnimatedVisibility(
-                                    videoState.isActive,
-                                    enter = fadeIn(),
-                                    exit = fadeOut(),
-                                ) {
-                                    VideoMiniPlayer(
-                                        Modifier
-                                            .fillMaxWidth()
-                                            .padding(horizontal = 12.dp)
-                                            .padding(bottom = 6.dp),
-                                        playback = videoPlayback,
-                                    )
-                                }
                                 AnimatedVisibility(
                                     isShowMiniPlayer && !videoState.isActive,
                                     enter = fadeIn() + slideInHorizontally(),
@@ -852,6 +839,21 @@ fun App(
                                 }
                             }
                         }
+                    }
+                }
+
+                // Like YouTube: a minimized video floats in the bottom right corner above the bar.
+                Box(Modifier.fillMaxSize()) {
+                    androidx.compose.animation.AnimatedVisibility(
+                        visible = isVideoMode && videoState.isActive && !showVideoWatch,
+                        enter = fadeIn() + androidx.compose.animation.scaleIn(initialScale = 0.8f),
+                        exit = fadeOut(),
+                        modifier =
+                            Modifier
+                                .align(Alignment.BottomEnd)
+                                .padding(end = 12.dp, bottom = innerPadding.calculateBottomPadding() + 12.dp),
+                    ) {
+                        VideoMiniPlayer(Modifier.width(196.dp), playback = videoPlayback)
                     }
                 }
 
