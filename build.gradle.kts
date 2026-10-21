@@ -21,7 +21,6 @@ plugins {
     alias(libs.plugins.osdetector) apply false
     alias(libs.plugins.conveyor) apply false
     alias(libs.plugins.compose.hotReload) apply false
-    alias(libs.plugins.google.protobuf) apply false
 }
 
 tasks.register<Delete>("Clean") {
