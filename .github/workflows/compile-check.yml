@@ -1,0 +1,49 @@
+name: Compile check
+
+# Fast feedback for work in progress: compiles the Android app and runs the scraper's JVM tests,
+# without building and signing the full release. Runs on every branch except main (main builds the APK).
+on:
+  push:
+    branches-ignore: [ main, ci-logs, probe-data ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: check-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - name: Free up disk space
+        run: |
+          sudo rm -rf /usr/share/dotnet /opt/ghc /usr/local/share/boost || true
+          df -h /
+
+      - uses: actions/checkout@v5
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v5
+        with:
+          java-version: 21
+          distribution: microsoft
+          cache: gradle
+
+      - name: Generate library licences list
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: .github/scripts/gradle-ci.sh licences exportLibraryDefinitions --no-configuration-cache
+
+      - name: Compile Android app
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: .github/scripts/gradle-ci.sh compile :androidApp:compileReleaseKotlin --stacktrace
+
+      - name: Scraper JVM tests
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: .github/scripts/gradle-ci.sh tests :kotlinYtmusicScraper:jvmTest --stacktrace

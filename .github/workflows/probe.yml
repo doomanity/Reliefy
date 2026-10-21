@@ -1,0 +1,30 @@
+name: Probe YouTube responses
+
+# Saves real (anonymous) YouTube web responses to the `probe-data` branch so the parsers for the
+# video side can be written against what YouTube really sends. Nothing here is signed in.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+      - name: Fetch responses
+        run: python3 .github/probe/probe.py probe-out
+      - name: Push to probe-data branch
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          cd probe-out
+          git init -q -b probe-data
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add .
+          git commit -q -m "Probe data for ${GITHUB_SHA::7}"
+          git push -q -f "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" probe-data
