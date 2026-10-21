@@ -98,7 +98,7 @@ kotlin {
                 implementation(libs.gson)
 
                 implementation(libs.pipepipe.extractor)
-                implementation(libs.brave.extractor)
+                implementation(libs.libretube.extractor)
                 implementation(libs.okhttp3.okhttp)
             }
         }
@@ -116,7 +116,7 @@ kotlin {
         jvmMain {
             dependencies {
                 implementation(libs.pipepipe.extractor)
-                implementation(libs.brave.extractor)
+                implementation(libs.libretube.extractor)
                 implementation(libs.okhttp3.okhttp)
             }
         }

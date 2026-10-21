@@ -104,6 +104,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     @ExperimentalFoundationApi
+    override fun onUserLeaveHint() {
+        super.onUserLeaveHint()
+        // Cooley: shrink a playing video to picture in picture (Android 11 and older)
+        com.maxrave.simpmusic.expect.ui.VideoPip.onUserLeaveHint(this)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         loadKoinModules(

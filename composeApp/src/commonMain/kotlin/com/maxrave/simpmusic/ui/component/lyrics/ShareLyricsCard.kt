@@ -177,7 +177,7 @@ internal fun ShareCardSignature(
         }
         Spacer(modifier = Modifier.width(6.dp))
         Text(
-            text = "Reliefy",
+            text = "Cooley",
             color = content.copy(alpha = 0.68f),
             fontSize = 10.sp,
             fontWeight = FontWeight.Medium,

@@ -206,6 +206,14 @@ fun runDesktopApp(args: Array<String> = emptyArray()) {
             ),
         )
         loadKoinModules(viewModelModule)
+        // Cooley: no video player on desktop yet
+        loadKoinModules(
+            org.koin.dsl.module {
+                single<com.maxrave.domain.mediaservice.video.VideoPlayback> {
+                    com.maxrave.domain.mediaservice.video.UnsupportedVideoPlayback
+                }
+            },
+        )
     }
 
     val language =

@@ -259,7 +259,7 @@ fun VideoMessage(
 }
 
 @Composable
-private fun RemoteImage(
+internal fun RemoteImage(
     url: String?,
     modifier: Modifier,
     contentScale: ContentScale = ContentScale.Crop,

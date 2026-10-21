@@ -31,6 +31,7 @@ import com.maxrave.simpmusic.viewModel.TasteViewModel
 import com.maxrave.simpmusic.viewModel.VideoHomeViewModel
 import com.maxrave.simpmusic.viewModel.VideoListViewModel
 import com.maxrave.simpmusic.viewModel.VideoSearchViewModel
+import com.maxrave.simpmusic.viewModel.VideoWatchViewModel
 import com.maxrave.simpmusic.viewModel.WrappedViewModel
 import com.maxrave.simpmusic.utils.AppModeController
 import org.koin.core.module.dsl.viewModel
@@ -44,6 +45,7 @@ val viewModelModule =
         viewModel { VideoHomeViewModel() }
         viewModel { VideoSearchViewModel() }
         viewModel { VideoListViewModel() }
+        viewModel { VideoWatchViewModel() }
         single {
             SharedViewModel(
                 get(),

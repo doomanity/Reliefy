@@ -37,7 +37,7 @@ class DiscordRPC(
             buttons =
                 listOf(
                     "Listen on YouTube Music" to "https://music.youtube.com/watch?v=${song.videoId}",
-                    "Get Reliefy" to "https://github.com/doomanity/Reliefy",
+                    "Get Cooley" to "https://github.com/doomanity/Reliefy",
                 ),
             type = Type.LISTENING,
             since = currentTime,
@@ -49,9 +49,9 @@ class DiscordRPC(
 
     companion object {
         private const val APPLICATION_ID = "1271273225120125040"
-        private const val APP_NAME: String = "Reliefy"
+        private const val APP_NAME: String = "Cooley"
         private const val MAX_NAME_LENGTH = 64
         private const val APP_ICON: String =
-            "https://fra.cloud.appwrite.io/v1/storage/buckets/683f1f620010ba0fa5b1/files/69007bc8001a28a7cea8/view?project=67ec0369002bd8a96885"
+            "https://raw.githubusercontent.com/doomanity/Reliefy/main/composeApp/src/commonMain/composeResources/drawable/app_icon.png"
     }
 }

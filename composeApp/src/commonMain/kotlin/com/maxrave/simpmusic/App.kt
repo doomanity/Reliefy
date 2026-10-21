@@ -108,6 +108,10 @@ import com.maxrave.simpmusic.ui.theme.fontFamily
 import com.maxrave.simpmusic.ui.theme.parseThemeColorHex
 import com.maxrave.simpmusic.ui.theme.typo
 import com.maxrave.simpmusic.ui.component.VideoBottomBar
+import com.maxrave.simpmusic.ui.screen.video.VideoMiniPlayer
+import com.maxrave.simpmusic.ui.screen.video.VideoWatchScreen
+import com.maxrave.simpmusic.ui.screen.video.VideoWatchUi
+import com.maxrave.domain.mediaservice.video.VideoPlayback
 import com.maxrave.simpmusic.utils.AppMode
 import com.maxrave.simpmusic.utils.AppModeController
 import com.maxrave.simpmusic.utils.VersionManager
@@ -494,6 +498,18 @@ fun App(
     val appModeController: AppModeController = koinInject()
     val appMode by appModeController.mode.collectAsState()
     val isVideoMode = appMode == AppMode.VIDEO
+    // Cooley: the video side's player and watch page
+    val videoPlayback: VideoPlayback = koinInject()
+    val videoState by videoPlayback.state.collectAsState()
+    val isVideoWatchOpen by VideoWatchUi.open.collectAsState()
+    val showVideoWatch = isVideoMode && isVideoWatchOpen && videoState.isActive
+    LaunchedEffect(isVideoMode) {
+        // The music side has no controls for a video, so leaving the video side ends it.
+        if (!isVideoMode) {
+            VideoWatchUi.minimize()
+            if (videoPlayback.state.value.isActive) videoPlayback.stop()
+        }
+    }
     val isTablet = windowSize.isWidthAtLeastBreakpoint(WIDTH_DP_MEDIUM_LOWER_BOUND)
     val isTabletLandscape = isTablet && currentOrientation() == Orientation.LANDSCAPE
 
@@ -540,15 +556,29 @@ fun App(
             bottomBar = {
                 if (!isTablet || isVideoMode) {
                     AnimatedVisibility(
-                        isNavBarVisible,
+                        isNavBarVisible && !showVideoWatch,
                         enter = fadeIn() + slideInHorizontally(),
                         exit = fadeOut(),
                     ) {
                         if (isVideoMode) {
-                            // The video half has its own bar. The mini player sits above it.
+                            // The video half has its own bar. A mini player sits above it: the
+                            // video's when one is loaded, otherwise the music's.
                             Column {
                                 AnimatedVisibility(
-                                    isShowMiniPlayer,
+                                    videoState.isActive,
+                                    enter = fadeIn(),
+                                    exit = fadeOut(),
+                                ) {
+                                    VideoMiniPlayer(
+                                        Modifier
+                                            .fillMaxWidth()
+                                            .padding(horizontal = 12.dp)
+                                            .padding(bottom = 6.dp),
+                                        playback = videoPlayback,
+                                    )
+                                }
+                                AnimatedVisibility(
+                                    isShowMiniPlayer && !videoState.isActive,
                                     enter = fadeIn() + slideInHorizontally(),
                                     exit = fadeOut(),
                                 ) {
@@ -825,6 +855,10 @@ fun App(
                     }
                 }
 
+                if (showVideoWatch) {
+                    VideoWatchScreen(navController = navController)
+                }
+
                 if (isShowNowPlaylistScreen && !isTabletLandscape) {
                     ForceDarkContent {
                         NowPlayingScreen(
@@ -888,7 +922,7 @@ fun App(
                                 onClick = {
                                     shouldShowUpdateDialog = false
                                     viewModel.showedUpdateDialog = false
-                                    openUrl("https://simpmusic.org/download")
+                                    openUrl("https://github.com/doomanity/Reliefy/releases/latest")
                                 },
                             ) {
                                 Text(

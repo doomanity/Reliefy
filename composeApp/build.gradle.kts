@@ -92,6 +92,8 @@ kotlin {
 
             api(projects.media3)
             api(projects.media3Ui)
+            // Cooley's video player (ported from LibreTube)
+            api(projects.videoPlayer)
 
             // Google Cast (gated: real SDK for full builds, no-op stub for FOSS builds)
             if (isFullBuild) {

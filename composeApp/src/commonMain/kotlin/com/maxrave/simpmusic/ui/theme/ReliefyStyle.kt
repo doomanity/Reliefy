@@ -256,7 +256,7 @@ val ThemePresets: List<ThemePreset> =
     listOf(
         ThemePreset(
             id = "reliefy",
-            name = "Reliefy",
+            name = "Cooley",
             seedHex = null,
             style = ReliefyStyle(ColorStyle.DEFAULT, CornerStyle.ROUND, MotionStyle.SMOOTH, BackgroundStyle.PURE_BLACK),
         ),

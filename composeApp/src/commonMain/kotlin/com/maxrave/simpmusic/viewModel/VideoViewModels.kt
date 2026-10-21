@@ -1,19 +1,15 @@
 package com.maxrave.simpmusic.viewModel
 
 import androidx.lifecycle.viewModelScope
-import com.maxrave.common.Config
-import com.maxrave.domain.data.model.browse.album.Track
-import com.maxrave.domain.data.model.searchResult.songs.Artist
-import com.maxrave.domain.data.model.searchResult.songs.Thumbnail
 import com.maxrave.domain.data.model.video.VideoChannelTab
 import com.maxrave.domain.data.model.video.VideoFeedItem
 import com.maxrave.domain.data.model.video.VideoItem
 import com.maxrave.domain.data.model.video.VideoPage
 import com.maxrave.domain.data.model.video.VideoSearchFilter
 import com.maxrave.domain.manager.DataStoreManager
-import com.maxrave.domain.mediaservice.handler.PlaylistType
-import com.maxrave.domain.mediaservice.handler.QueueData
+import com.maxrave.domain.mediaservice.video.VideoPlayback
 import com.maxrave.domain.repository.VideoRepository
+import com.maxrave.simpmusic.ui.screen.video.VideoWatchUi
 import com.maxrave.simpmusic.viewModel.base.BaseViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -122,13 +118,15 @@ private fun VideoFeedItem.key(): String =
 abstract class VideoViewModel : BaseViewModel() {
     protected val videoRepository: VideoRepository by inject<VideoRepository>()
     private val dataStoreManager: DataStoreManager by inject<DataStoreManager>()
+    private val videoPlayback: VideoPlayback by inject<VideoPlayback>()
 
     /** True while a YouTube account is signed in (the home feed is then made for the user). */
     val isLoggedIn: Flow<Boolean> by lazy { dataStoreManager.loggedIn.map { it == DataStoreManager.TRUE } }
 
     /**
-     * Plays [video] and queues the videos that follow it in [context] (the list it was tapped in),
-     * the way a playlist plays on. Shorts are left out of the queue unless one was tapped.
+     * Plays [video] in the video player and opens the watch page. The videos after it in
+     * [context] (the list it was tapped in) play next, the way YouTube carries on through a list.
+     * Shorts and upcoming premieres are left out of that queue.
      */
     fun playVideo(
         video: VideoItem,
@@ -138,26 +136,16 @@ abstract class VideoViewModel : BaseViewModel() {
         val start = videos.indexOfFirst { it.videoId == video.videoId }
         val following =
             if (start >= 0) {
-                videos.drop(start + 1).filter { !it.isShort && !it.isUpcoming }
+                videos.drop(start + 1).filter { !it.isShort && !it.isUpcoming }.take(QUEUE_LIMIT)
             } else {
                 emptyList()
             }
-        val tracks = (listOf(video) + following).take(QUEUE_LIMIT).map { it.toTrack() }
-        setQueueData(
-            QueueData.Data(
-                listTracks = ArrayList(tracks),
-                firstPlayedTrack = tracks.first(),
-                playlistId = null,
-                playlistName = "Video",
-                playlistType = PlaylistType.PLAYLIST,
-                continuation = null,
-            ),
-        )
-        loadMediaItem(tracks.first(), Config.PLAYLIST_CLICK, 0)
+        videoPlayback.play(video, following)
+        VideoWatchUi.open()
     }
 
     private companion object {
-        const val QUEUE_LIMIT = 30
+        const val QUEUE_LIMIT = 50
     }
 }
 
@@ -266,41 +254,36 @@ class VideoListViewModel : VideoViewModel() {
     }
 }
 
-internal fun VideoItem.toTrack(): Track =
-    Track(
-        album = null,
-        artists = listOf(Artist(channelId, channelName ?: "YouTube")),
-        duration = durationText,
-        durationSeconds = durationText?.let(::durationToSeconds),
-        isAvailable = true,
-        isExplicit = false,
-        likeStatus = "INDIFFERENT",
-        // A 4:3 poster. Never square, so the player never mistakes the video for a song.
-        thumbnails =
-            listOf(
-                Thumbnail(
-                    height = 360,
-                    url = thumbnailUrl ?: "https://i.ytimg.com/vi/$videoId/hqdefault.jpg",
-                    width = 480,
-                ),
-            ),
-        title = title,
-        videoId = videoId,
-        videoType = null,
-        category = null,
-        feedbackTokens = null,
-        resultType = "Video",
-        views = viewsText,
-    )
+/** The watch page: the player's state plus the "From <channel>" list. */
+class VideoWatchViewModel : BaseViewModel() {
+    val playback: VideoPlayback by inject<VideoPlayback>()
+    private val videoRepository: VideoRepository by inject<VideoRepository>()
 
-/** "5:38" -> 338, "1:04:42" -> 3882. Null for anything else ("LIVE", empty). */
-internal fun durationToSeconds(text: String): Int? {
-    val parts = text.trim().split(':')
-    if (parts.size !in 2..3) return null
-    var total = 0
-    for (part in parts) {
-        val n = part.toIntOrNull() ?: return null
-        total = total * 60 + n
+    private val _channelVideos = MutableStateFlow<List<VideoItem>>(emptyList())
+    val channelVideos: StateFlow<List<VideoItem>> = _channelVideos.asStateFlow()
+
+    private var channelLoadedFor: String? = null
+
+    fun loadChannelVideos(channelId: String) {
+        if (channelLoadedFor == channelId) return
+        channelLoadedFor = channelId
+        _channelVideos.value = emptyList()
+        viewModelScope.launch {
+            videoRepository.channel(channelId, VideoChannelTab.VIDEOS).onSuccess { page ->
+                if (channelLoadedFor == channelId) {
+                    _channelVideos.value = page.items.mapNotNull { (it as? VideoFeedItem.Video)?.video }
+                }
+            }
+        }
     }
-    return total
+
+    /** Plays [video] from [list], queueing the rest of the list after it. */
+    fun playFrom(
+        video: VideoItem,
+        list: List<VideoItem>,
+    ) {
+        val index = list.indexOfFirst { it.videoId == video.videoId }
+        val rest = if (index >= 0) list.drop(index + 1) else emptyList()
+        playback.play(video, rest.filter { !it.isShort && !it.isUpcoming })
+    }
 }

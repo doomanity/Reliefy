@@ -35,6 +35,7 @@ import com.maxrave.simpmusic.ui.navigation.destination.video.VideoPlaylistDestin
 import com.maxrave.simpmusic.ui.screen.video.VideoHomeScreen
 import com.maxrave.simpmusic.ui.screen.video.VideoListScreen
 import com.maxrave.simpmusic.ui.screen.video.VideoSearchScreen
+import com.maxrave.simpmusic.ui.screen.video.VideoWatchUi
 import com.maxrave.simpmusic.utils.AppMode
 import com.maxrave.simpmusic.utils.AppModeController
 import org.koin.compose.koinInject
@@ -71,7 +72,7 @@ fun AppNavigationGraph(
                 VideoHomeScreen(
                     navController = navController,
                     innerPadding = innerPadding,
-                    onOpenPlayer = showNowPlayingSheet,
+                    onOpenPlayer = { VideoWatchUi.open() },
                 )
             } else {
                 HomeScreen(
@@ -85,7 +86,7 @@ fun AppNavigationGraph(
                 VideoSearchScreen(
                     navController = navController,
                     innerPadding = innerPadding,
-                    onOpenPlayer = showNowPlayingSheet,
+                    onOpenPlayer = { VideoWatchUi.open() },
                 )
             } else {
                 SearchScreen(
@@ -99,7 +100,7 @@ fun AppNavigationGraph(
             VideoListScreen(
                 navController = navController,
                 innerPadding = innerPadding,
-                onOpenPlayer = showNowPlayingSheet,
+                onOpenPlayer = { VideoWatchUi.open() },
                 title = route.name,
                 channelId = route.channelId,
             )
@@ -109,7 +110,7 @@ fun AppNavigationGraph(
             VideoListScreen(
                 navController = navController,
                 innerPadding = innerPadding,
-                onOpenPlayer = showNowPlayingSheet,
+                onOpenPlayer = { VideoWatchUi.open() },
                 title = route.title,
                 playlistId = route.playlistId,
             )

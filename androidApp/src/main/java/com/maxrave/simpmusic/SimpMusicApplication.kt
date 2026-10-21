@@ -68,6 +68,8 @@ class SimpMusicApplication :
                 ),
             )
             loadKoinModules(viewModelModule)
+            // Cooley: the video side's player (ported from LibreTube)
+            loadKoinModules(com.doomanity.cooley.video.videoPlayerModule)
         }
         // provide custom configuration
         val workConfig =

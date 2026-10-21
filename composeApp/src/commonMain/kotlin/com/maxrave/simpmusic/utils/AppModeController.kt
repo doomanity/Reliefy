@@ -21,12 +21,7 @@ enum class AppMode {
 }
 
 /**
- * Holds which half of the app is showing, and keeps the one setting the video half depends on in
- * step with it.
- *
- * Video mode plays every item as video ("watch the video instead of playing audio"). The user may
- * have chosen that setting for the music half themselves, so entering Video mode remembers what it
- * was and returning to Music mode puts it back, instead of leaving it switched on for good.
+ * Holds which half of the app is showing. The app opens in the half it was last left in.
  */
 class AppModeController(
     private val dataStoreManager: DataStoreManager,
@@ -53,23 +48,13 @@ class AppModeController(
         scope.launch {
             writeLock.withLock {
                 try {
-                    if (target == AppMode.VIDEO) {
-                        // Remember the user's own choice once. A quick Music -> Video -> Music ->
-                        // Video must not overwrite it with the value Video mode itself set.
-                        val remembered = dataStoreManager.getString(PREVIOUS_WATCH_KEY).first()
-                        if (remembered.isNullOrEmpty()) {
-                            dataStoreManager.putString(
-                                PREVIOUS_WATCH_KEY,
-                                dataStoreManager.watchVideoInsteadOfPlayingAudio.first(),
-                            )
-                        }
-                        dataStoreManager.setWatchVideoInsteadOfPlayingAudio(true)
-                    } else {
-                        val remembered = dataStoreManager.getString(PREVIOUS_WATCH_KEY).first()
-                        if (!remembered.isNullOrEmpty()) {
-                            dataStoreManager.setWatchVideoInsteadOfPlayingAudio(remembered == DataStoreManager.TRUE)
-                            dataStoreManager.putString(PREVIOUS_WATCH_KEY, "")
-                        }
+                    // Cooley 1.1.0 played videos through the music player and switched "watch video
+                    // instead of audio" on for that. The video side has its own player now, so
+                    // just put back whatever the user had, once.
+                    val remembered = dataStoreManager.getString(PREVIOUS_WATCH_KEY).first()
+                    if (!remembered.isNullOrEmpty()) {
+                        dataStoreManager.setWatchVideoInsteadOfPlayingAudio(remembered == DataStoreManager.TRUE)
+                        dataStoreManager.putString(PREVIOUS_WATCH_KEY, "")
                     }
                     dataStoreManager.putString(MODE_KEY, target.name)
                     Logger.i(TAG, "mode is now ${target.name}")
