@@ -124,6 +124,7 @@ import simpmusic.composeapp.generated.resources.video_chip_related
 import simpmusic.composeapp.generated.resources.video_more
 import simpmusic.composeapp.generated.resources.video_comments
 import simpmusic.composeapp.generated.resources.video_comments_failed
+import simpmusic.composeapp.generated.resources.video_comments_off
 import simpmusic.composeapp.generated.resources.video_comment_pinned
 import simpmusic.composeapp.generated.resources.video_comment_replies
 import simpmusic.composeapp.generated.resources.video_play_error
@@ -983,7 +984,6 @@ private fun CommentsTeaser(
     comments: CommentsState,
     onOpen: () -> Unit,
 ) {
-    if (comments.disabled) return
     val first = comments.items.firstOrNull()
     Column(
         Modifier
@@ -1018,6 +1018,8 @@ private fun CommentsTeaser(
                 }
             comments.loading ->
                 CircularProgressIndicator(Modifier.padding(top = 8.dp).size(18.dp), strokeWidth = 2.dp)
+            comments.disabled ->
+                Text(stringResource(Res.string.video_comments_off), style = typo().bodySmall, modifier = Modifier.padding(top = 6.dp))
             comments.failed ->
                 Text(stringResource(Res.string.video_comments_failed), style = typo().bodySmall, modifier = Modifier.padding(top = 6.dp))
         }

@@ -35,6 +35,21 @@ internal class VideoRepositoryImpl(
 
     override suspend fun related(videoId: String): Result<VideoPage> = call("related") { youTube.video.related(videoId) }
 
+    override suspend fun comments(
+        videoId: String,
+        continuation: String?,
+    ): Result<com.maxrave.domain.mediaservice.video.VideoCommentsPage> =
+        withContext(Dispatchers.IO) {
+            try {
+                Result.success(youTube.video.comments(videoId, continuation))
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                Logger.w(TAG, "comments failed: ${e.message}")
+                Result.failure(e)
+            }
+        }
+
     override suspend fun more(continuation: String): Result<VideoPage> = call("more") { youTube.video.more(continuation) }
 
     private suspend fun call(

@@ -32,6 +32,12 @@ interface VideoRepository {
     /** The "up next" list for a video. */
     suspend fun related(videoId: String): Result<VideoPage>
 
+    /** Comments of [videoId]; [continuation] is null for the first page. */
+    suspend fun comments(
+        videoId: String,
+        continuation: String? = null,
+    ): Result<com.maxrave.domain.mediaservice.video.VideoCommentsPage>
+
     /** The next page of whatever feed produced [continuation]. */
     suspend fun more(continuation: String): Result<VideoPage>
 }

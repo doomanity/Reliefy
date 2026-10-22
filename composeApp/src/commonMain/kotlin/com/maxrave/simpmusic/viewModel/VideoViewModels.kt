@@ -309,7 +309,7 @@ class VideoWatchViewModel : BaseViewModel() {
             _comments.value = CommentsState(loading = true)
             commentsJob =
                 viewModelScope.launch {
-                    playback.comments(videoId).fold(
+                    videoRepository.comments(videoId).fold(
                         onSuccess = { page ->
                             if (commentsLoadedFor == videoId) {
                                 _comments.value =
@@ -335,7 +335,7 @@ class VideoWatchViewModel : BaseViewModel() {
         _comments.update { it.copy(loading = true) }
         commentsJob =
             viewModelScope.launch {
-                playback.comments(videoId, next).fold(
+                videoRepository.comments(videoId, next).fold(
                     onSuccess = { page ->
                         if (commentsLoadedFor == videoId) {
                             _comments.update {

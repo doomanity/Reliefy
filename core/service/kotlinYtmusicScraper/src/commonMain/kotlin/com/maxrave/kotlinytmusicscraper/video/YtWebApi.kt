@@ -133,6 +133,21 @@ class YtWebApi(
         return prefixed("n", YtVideoFeedParser.parseRelated(response))
     }
 
+    /**
+     * Comments of [videoId]. [continuation] is null for the first page. A watch page without a
+     * comment section (comments turned off, or a video made for kids) answers a disabled page.
+     */
+    suspend fun comments(
+        videoId: String,
+        continuation: String?,
+    ): com.maxrave.domain.mediaservice.video.VideoCommentsPage {
+        val token =
+            continuation
+                ?: YtCommentsParser.firstPageToken(post("next") { put("videoId", videoId) })
+                ?: return com.maxrave.domain.mediaservice.video.VideoCommentsPage(emptyList(), disabled = true)
+        return YtCommentsParser.parsePage(post("next") { put("continuation", token) })
+    }
+
     suspend fun more(continuation: String): VideoPage {
         val sep = continuation.indexOf(':')
         if (sep < 1) return VideoPage(emptyList(), null)

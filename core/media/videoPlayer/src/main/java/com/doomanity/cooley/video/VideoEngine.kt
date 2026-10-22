@@ -21,6 +21,13 @@ import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DefaultDataSource
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.hls.HlsMediaSource
+import androidx.media3.exoplayer.source.MergingMediaSource
+import androidx.media3.exoplayer.source.ProgressiveMediaSource
+import com.maxrave.domain.manager.DataStoreManager
+import com.maxrave.domain.repository.StreamRepository
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeout
 import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
 import com.doomanity.cooley.video.sabr.SabrMediaSource
@@ -79,6 +86,9 @@ private enum class SourceKind(
 @OptIn(UnstableApi::class)
 class VideoEngine(
     context: Context,
+    /** The music side's stream loader, used as a backup when LibreTube's way cannot load a video. */
+    private val streamRepository: StreamRepository? = null,
+    private val dataStoreManager: DataStoreManager? = null,
 ) : VideoPlayback {
     private val context = context.applicationContext
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
@@ -230,6 +240,8 @@ class VideoEngine(
                     Logger.i(TAG, "falling back to ${_state.value.streamKind}")
                     return
                 }
+                val id = _state.value.current?.videoId
+                if (id != null && tryBackup(id, player.currentPosition, error.localizedMessage ?: error.errorCodeName)) return
                 _state.update {
                     it.copy(
                         status = VideoLoadStatus.ERROR,
@@ -379,6 +391,7 @@ class VideoEngine(
         loadJob?.cancel()
         loaded = null
         triedKinds.clear()
+        triedBackup = false
         skipped.clear()
         qualityAppliedFor = null
         played += video.videoId
@@ -415,6 +428,7 @@ class VideoEngine(
                         throw e
                     } catch (e: Throwable) {
                         Logger.e(TAG, "could not load ${video.videoId}: ${e.message}")
+                        if (tryBackup(video.videoId, resumeAtMs, e.message ?: e::class.simpleName.orEmpty())) return@launch
                         _state.update {
                             it.copy(
                                 status = VideoLoadStatus.ERROR,
@@ -450,11 +464,64 @@ class VideoEngine(
                     }
                 }
                 if (!setSource(result, startPositionMs = resumeAtMs)) {
+                    if (tryBackup(video.videoId, resumeAtMs, "No playable stream found")) return@launch
                     _state.update {
                         it.copy(status = VideoLoadStatus.ERROR, error = "No playable stream found", isBuffering = false)
                     }
                 }
             }
+    }
+
+    private var triedBackup = false
+
+    /**
+     * Last resort: load the video with the music side's loader (other YouTube clients, other
+     * extractors), as one video stream plus one audio stream. Fixes many "not available" videos
+     * that LibreTube's client is refused, like some made for kids. Returns false when there is no
+     * backup to try; [reason] is shown if the backup fails too.
+     */
+    private fun tryBackup(
+        videoId: String,
+        startPositionMs: Long,
+        reason: String,
+    ): Boolean {
+        val repo = streamRepository ?: return false
+        val store = dataStoreManager ?: return false
+        if (triedBackup) return false
+        triedBackup = true
+        Logger.i(TAG, "trying the backup loader for $videoId ($reason)")
+        _state.update { it.copy(status = VideoLoadStatus.LOADING, error = null, isBuffering = true, streamKind = "Backup") }
+        loadJob =
+            scope.launch {
+                val (videoUrl, audioUrl) =
+                    withContext(Dispatchers.IO) {
+                        val v = runCatching { withTimeout(40_000) { repo.getStream(store, videoId, false, true).first() } }.getOrNull()
+                        val a = runCatching { withTimeout(40_000) { repo.getStream(store, videoId, false, false).first() } }.getOrNull()
+                        v to a
+                    }
+                if (videoUrl.isNullOrBlank() && audioUrl.isNullOrBlank()) {
+                    _state.update { it.copy(status = VideoLoadStatus.ERROR, error = reason, isBuffering = false) }
+                    return@launch
+                }
+                val current = _state.value
+                val metadata =
+                    MediaMetadata
+                        .Builder()
+                        .setTitle(current.details?.title ?: current.current?.title)
+                        .setArtist(current.details?.channelName ?: current.current?.channelName)
+                        .setArtworkUri((current.details?.thumbnailUrl ?: current.current?.thumbnailUrl)?.toUri())
+                        .build()
+                val factory = ProgressiveMediaSource.Factory(DefaultDataSource.Factory(context))
+                fun source(url: String) =
+                    factory.createMediaSource(MediaItem.Builder().setUri(url).setMediaId(videoId).setMediaMetadata(metadata).build())
+                val sources = listOfNotNull(videoUrl?.takeIf { it.isNotBlank() }, audioUrl?.takeIf { it.isNotBlank() }).map(::source)
+                player.setMediaSource(if (sources.size == 1) sources[0] else MergingMediaSource(*sources.toTypedArray()))
+                player.setPlaybackSpeed(_state.value.speed)
+                if (startPositionMs > 0) player.seekTo(startPositionMs)
+                player.prepare()
+                player.playWhenReady = true
+            }
+        return true
     }
 
     /**
