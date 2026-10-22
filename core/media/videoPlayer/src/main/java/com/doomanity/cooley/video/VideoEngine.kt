@@ -19,6 +19,7 @@ import androidx.media3.common.Tracks
 import androidx.media3.common.VideoSize
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DefaultDataSource
+import androidx.media3.datasource.DefaultHttpDataSource
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.hls.HlsMediaSource
 import androidx.media3.exoplayer.source.MergingMediaSource
@@ -35,6 +36,8 @@ import com.doomanity.cooley.video.sabr.manifest.SabrManifest
 import com.doomanity.cooley.video.stream.CommentsFetcher
 import com.doomanity.cooley.video.stream.DashHelper
 import com.doomanity.cooley.video.stream.LoadedVideo
+import com.doomanity.cooley.video.stream.PlainClientLoader
+import com.doomanity.cooley.video.stream.PlainStream
 import com.doomanity.cooley.video.stream.StreamFetcher
 import com.doomanity.cooley.video.stream.Streams
 import com.doomanity.cooley.video.stream.VideoExtras
@@ -391,7 +394,8 @@ class VideoEngine(
         loadJob?.cancel()
         loaded = null
         triedKinds.clear()
-        triedBackup = false
+        backupStage = 0
+        backupReason = null
         skipped.clear()
         qualityAppliedFor = null
         played += video.videoId
@@ -472,24 +476,130 @@ class VideoEngine(
             }
     }
 
-    private var triedBackup = false
+    /** How many backup loaders have been tried for the current video (see [tryBackup]). */
+    private var backupStage = 0
+
+    /** Why the main loader failed, shown if every backup fails too. */
+    private var backupReason: String? = null
 
     /**
-     * Last resort: load the video with the music side's loader (other YouTube clients, other
-     * extractors), as one video stream plus one audio stream. Fixes many "not available" videos
-     * that LibreTube's client is refused, like some made for kids. Returns false when there is no
-     * backup to try; [reason] is shown if the backup fails too.
+     * Last resorts, in order, each tried once per video:
+     *  1. YouTube's own phone apps (iPhone HLS, then an Android mp4), see [PlainClientLoader].
+     *     LibreTube's client is refused every "made for kids" video; these are not.
+     *  2. The music side's loader (other clients, other extractors), as one video stream plus one
+     *     audio stream. Fixes many region locked videos.
+     * Returns false when there is nothing left to try; [reason] is shown then.
      */
     private fun tryBackup(
         videoId: String,
         startPositionMs: Long,
         reason: String,
     ): Boolean {
-        val repo = streamRepository ?: return false
-        val store = dataStoreManager ?: return false
-        if (triedBackup) return false
-        triedBackup = true
-        Logger.i(TAG, "trying the backup loader for $videoId ($reason)")
+        if (backupReason == null) backupReason = reason
+        while (backupStage < 2) {
+            val stage = backupStage++
+            when (stage) {
+                0 -> {
+                    startPlainBackup(videoId, startPositionMs)
+                    return true
+                }
+                1 -> if (streamRepository != null && dataStoreManager != null) {
+                    startMusicBackup(videoId, startPositionMs)
+                    return true
+                }
+            }
+        }
+        return false
+    }
+
+    private fun failBackups() {
+        _state.update { it.copy(status = VideoLoadStatus.ERROR, error = backupReason, isBuffering = false) }
+    }
+
+    private fun backupMetadata(): MediaMetadata {
+        val current = _state.value
+        return MediaMetadata
+            .Builder()
+            .setTitle(current.details?.title ?: current.current?.title)
+            .setArtist(current.details?.channelName ?: current.current?.channelName)
+            .setArtworkUri((current.details?.thumbnailUrl ?: current.current?.thumbnailUrl)?.toUri())
+            .build()
+    }
+
+    private fun startPlainBackup(
+        videoId: String,
+        startPositionMs: Long,
+    ) {
+        Logger.i(TAG, "trying the phone app clients for $videoId ($backupReason)")
+        _state.update { it.copy(status = VideoLoadStatus.LOADING, error = null, isBuffering = true, streamKind = "Backup") }
+        loadJob =
+            scope.launch {
+                val result = PlainClientLoader.load(videoId)
+                if (result == null) {
+                    if (!tryBackup(videoId, startPositionMs, backupReason.orEmpty())) failBackups()
+                    return@launch
+                }
+                // The main loader may have failed before reading anything; fill the watch page.
+                result.details?.let { found ->
+                    _state.update { s ->
+                        if (s.current?.videoId != videoId) return@update s
+                        val old = s.details
+                        val merged =
+                            if (old == null || old.videoId != videoId) {
+                                found.copy(related = upNext?.takeIf { it.first == videoId }?.second.orEmpty())
+                            } else {
+                                old
+                            }
+                        s.copy(details = merged, durationMs = if (s.durationMs > 0) s.durationMs else found.durationSeconds * 1000)
+                    }
+                    launch {
+                        val dislikes = VideoExtras.dislikes(videoId)
+                        if (dislikes >= 0) {
+                            _state.update { s ->
+                                val d = s.details
+                                if (d != null && d.videoId == videoId) s.copy(details = d.copy(dislikeCount = dislikes)) else s
+                            }
+                        }
+                    }
+                }
+                val stream = result.stream
+                val http = DefaultHttpDataSource.Factory().setUserAgent(stream.userAgent).setAllowCrossProtocolRedirects(true)
+                val metadata = backupMetadata()
+                fun item(
+                    url: String,
+                    mime: String? = null,
+                ) = MediaItem
+                    .Builder()
+                    .setUri(url)
+                    .apply { if (mime != null) setMimeType(mime) }
+                    .setMediaId(videoId)
+                    .setMediaMetadata(metadata)
+                    .build()
+                val source =
+                    when (stream) {
+                        is PlainStream.Hls -> HlsMediaSource.Factory(http).createMediaSource(item(stream.url, MimeTypes.APPLICATION_M3U8))
+                        is PlainStream.Files -> {
+                            val factory = ProgressiveMediaSource.Factory(http)
+                            val parts = listOfNotNull(stream.videoUrl, stream.audioUrl).map { factory.createMediaSource(item(it)) }
+                            if (parts.size == 1) parts[0] else MergingMediaSource(*parts.toTypedArray())
+                        }
+                    }
+                _state.update { it.copy(streamKind = "${stream.clientLabel} app") }
+                player.setMediaSource(source)
+                player.setPlaybackSpeed(_state.value.speed)
+                if (startPositionMs > 0) player.seekTo(startPositionMs)
+                player.prepare()
+                player.playWhenReady = true
+            }
+    }
+
+    private fun startMusicBackup(
+        videoId: String,
+        startPositionMs: Long,
+    ) {
+        val repo = streamRepository ?: return
+        val store = dataStoreManager ?: return
+        Logger.i(TAG, "trying the music loader for $videoId ($backupReason)")
         _state.update { it.copy(status = VideoLoadStatus.LOADING, error = null, isBuffering = true, streamKind = "Backup") }
         loadJob =
             scope.launch {
@@ -500,28 +610,21 @@ class VideoEngine(
                         v to a
                     }
                 if (videoUrl.isNullOrBlank() && audioUrl.isNullOrBlank()) {
-                    _state.update { it.copy(status = VideoLoadStatus.ERROR, error = reason, isBuffering = false) }
+                    failBackups()
                     return@launch
                 }
-                val current = _state.value
-                val metadata =
-                    MediaMetadata
-                        .Builder()
-                        .setTitle(current.details?.title ?: current.current?.title)
-                        .setArtist(current.details?.channelName ?: current.current?.channelName)
-                        .setArtworkUri((current.details?.thumbnailUrl ?: current.current?.thumbnailUrl)?.toUri())
-                        .build()
+                val metadata = backupMetadata()
                 val factory = ProgressiveMediaSource.Factory(DefaultDataSource.Factory(context))
                 fun source(url: String) =
                     factory.createMediaSource(MediaItem.Builder().setUri(url).setMediaId(videoId).setMediaMetadata(metadata).build())
                 val sources = listOfNotNull(videoUrl?.takeIf { it.isNotBlank() }, audioUrl?.takeIf { it.isNotBlank() }).map(::source)
+                _state.update { it.copy(streamKind = "Music loader") }
                 player.setMediaSource(if (sources.size == 1) sources[0] else MergingMediaSource(*sources.toTypedArray()))
                 player.setPlaybackSpeed(_state.value.speed)
                 if (startPositionMs > 0) player.seekTo(startPositionMs)
                 player.prepare()
                 player.playWhenReady = true
             }
-        return true
     }
 
     /**
