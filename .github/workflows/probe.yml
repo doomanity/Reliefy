@@ -20,7 +20,9 @@ jobs:
     steps:
       - uses: actions/checkout@v5
       - name: Fetch responses
-        run: python3 .github/probe/probe.py probe-out
+        run: python3 .github/probe/probe.py probe-out || true
+      - name: Made-for-kids clients
+        run: python3 .github/probe/kids.py probe-out
       - name: Push to probe-data branch
         env:
           GITHUB_TOKEN: ${{ github.token }}
