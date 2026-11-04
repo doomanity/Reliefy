@@ -38,9 +38,6 @@ Grab the latest APK from [Releases](https://github.com/doomanity/Reliefy/release
 - Most phones: `Cooley-x.y.z-arm64-v8a.apk`
 - Not sure? `Cooley-x.y.z-universal.apk` works everywhere (bigger file)
 
-Every push to `main` builds a new signed APK automatically with GitHub Actions
-([workflow](.github/workflows/build-apk.yml)). No Android Studio needed.
-
 ## Building it yourself
 
 ```bash
